@@ -20,5 +20,5 @@ jobs:
     - name: build
       run: dotnet build
     - name: test
-      run: dotnet test
+      run: dotnet test --configuration CI
       timeout-minutes: 5
