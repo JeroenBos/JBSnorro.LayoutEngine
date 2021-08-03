@@ -22,4 +22,12 @@
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="blatex.css">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Index.html">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>
