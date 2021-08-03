@@ -10,8 +10,7 @@ namespace SeleniumLayoutEngine.Tests
 		public void TestSeleniumTutorial()
 		{
 			var options = new ChromeOptions();
-			options.AddArgument("--headless");
-			options.AddArgument("--disable-gpu");
+			options.AsHeadlessInCI();
 			IWebDriver chromeDriver = new ChromeDriver(options);
 			chromeDriver.Navigate().GoToUrl("http://automatetheplanet.com/");
 			IWebElement element = chromeDriver.FindElement(By.Id("cookie-law-info-bar"));
