@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ] 
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        # select a 'version' from https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/6.0/releases.json
+        dotnet-version: 6.0.100-preview.6.21355.2
+        include-prerelease: true
+    - name: build
+      run: dotnet build **/*.csproj
+    - name: test
+      run: dotnet test *Tests
+      timeout-minutes: 5
