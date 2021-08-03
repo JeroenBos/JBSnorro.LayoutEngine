@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
+		<Configurations>Debug;Release;CI</Configurations>
   </PropertyGroup>
 
 	<ItemGroup>
