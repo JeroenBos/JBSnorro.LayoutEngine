@@ -4,6 +4,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;CI</Configurations>
 	</PropertyGroup>
 
@@ -11,6 +12,11 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>SeleniumLayoutEngine.Tests</_Parameter1>
 		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
 	</ItemGroup>
 
 </Project>

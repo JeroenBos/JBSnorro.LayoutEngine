@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<Configurations>Debug;Release;CI</Configurations>
 	</PropertyGroup>
@@ -25,6 +26,12 @@
 	<ItemGroup>
 		<None Update="blatex.css">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="OneElementWithSizes.html">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Bodyless.html">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Index.html">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

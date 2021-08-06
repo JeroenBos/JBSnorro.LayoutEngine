@@ -19,7 +19,7 @@ namespace SeleniumLayoutEngine.Tests
 			chromeDriver.Navigate().GoToUrl("file:///" + Path.Combine(CurrentPath, "Index.html"));
 			IWebElement element = chromeDriver.FindElement(By.Id("test"));
 
-			Assert.NotNull(element);
+			Assert.IsNotNull(element);
 		}
 
 		[Test]
