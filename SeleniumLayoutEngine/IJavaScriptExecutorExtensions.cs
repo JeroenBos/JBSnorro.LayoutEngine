@@ -88,11 +88,6 @@ for (var i = 0, max = all.length; i < max; i++)
     var value = " + functionName + @"(all[i]);
 
     result[xpath] = value;
-
-    // console.log('{');
-    // console.log('    \""' + xpath + '\"",');
-    // console.log('    \""' + value + '\""');
-    // console.log('}' + (i + 1 == max ? ',' : ''));
 }
 return result;";
 
@@ -109,7 +104,7 @@ return result;";
 	/// <param name="functionName"> The name of the function on the element to invoke. </param>
 	/// <param name="this"> The element to invoke the function on. </param>
 	/// <param name="arguments"> Additional arguments to be passed to the function. </param>
-	private static object ThisExecuteScript(this IJavaScriptExecutor driver, string functionName, IWebElement @this, params object[] arguments)
+	public static object ThisExecuteScript(this IJavaScriptExecutor driver, string functionName, IWebElement @this, params object[] arguments)
 	{
 		var allArguments = new List<object>();
 		allArguments.Add(@this);
@@ -123,11 +118,5 @@ return result;";
             }}
             return executeOnSelf(...arguments);";
 		return driver.ExecuteScript(js, allArguments.ToArray());
-	}
-
-	private static string GetElementByXPathJSSourceCode(string path)
-	{
-		//Not really implemented but interesting nonetheless
-		return $"document.evaluate({path}, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;";
 	}
 }
