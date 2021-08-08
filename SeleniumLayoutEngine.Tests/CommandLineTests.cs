@@ -4,26 +4,11 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
 using System;
-using System.Diagnostics;
 
 namespace SeleniumLayoutEngine.Tests
 {
-	
 	public class CommandLineTests
 	{
-		[OneTimeSetUp]
-		public void StartTest()
-		{
-			Trace.Listeners.Add(new ConsoleTraceListener());
-		}
-
-		[OneTimeTearDown]
-		public void EndTest()
-		{
-			Trace.Flush();
-		}
-
-
 		[Test]
 		public async Task Open_Index()
 		{
@@ -40,7 +25,7 @@ namespace SeleniumLayoutEngine.Tests
 0,0,0,0
 0,0,0,0
 ".Replace("\r", "");
-				//Assert.AreEqual("", stdErr.ToString());
+				Assert.AreEqual("", stdErr.ToString());
 				Assert.AreEqual(expected, output);
 			}
 		}
@@ -51,7 +36,7 @@ namespace SeleniumLayoutEngine.Tests
 			{
 				await Program.Main(new string[] { "--file", "OneElementWithSizes.html" });
 
-				//Assert.AreEqual("", stdErr.ToString());
+				Assert.AreEqual("", stdErr.ToString());
 
 				string? output = stdOut.ToString();
 				string expected = @"0,0,800,316.5
