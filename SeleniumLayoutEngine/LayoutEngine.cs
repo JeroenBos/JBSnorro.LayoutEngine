@@ -52,8 +52,8 @@ public static class LayoutEngine
 		options.AddArgument("--allow-file-access-from-files");
 
 		var driver = new ChromeDriver(options);
-		System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath}'");
-		driver.Navigate().GoToUrl(fullPath);
+		System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
+		driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 		return driver;
 	}
 	/// <summary>
@@ -71,6 +71,13 @@ public static class LayoutEngine
 		return MeasureBoundingClientsRects(driver)
 				  .OrderBy(pair => pair.Key)
 				  .Select(pair => pair.Value);
+	}
+
+	private static string ToFileSystemPath(this string path)
+	{
+		if (!path.StartsWith("file:"))
+			path = "file:///" + path;
+		return path;
 	}
 
 	/// <summary> Gets whether the path is a full path in the current OS. </summary>

@@ -16,7 +16,7 @@ namespace SeleniumLayoutEngine.Tests
 			options.AsHeadlessInCI();
 			options.AddArgument("--allow-file-access-from-files");
 			IWebDriver chromeDriver = new ChromeDriver(options);
-			chromeDriver.Navigate().GoToUrl(Path.Combine(CurrentPath, "Index.html"));
+			chromeDriver.Navigate().GoToUrl("file:///" + Path.Combine(CurrentPath, "Index.html"));
 			IWebElement element = chromeDriver.FindElement(By.Id("test"));
 
 			Assert.IsNotNull(element);
@@ -29,7 +29,7 @@ namespace SeleniumLayoutEngine.Tests
 			options.AsHeadlessInCI();
 			options.AddArgument("--allow-file-access-from-files");
 			IWebDriver chromeDriver = new ChromeDriver(options);
-			chromeDriver.Navigate().GoToUrl(Path.Combine(CurrentPath, "Index.html"));
+			chromeDriver.Navigate().GoToUrl("file:///" + Path.Combine(CurrentPath, "Index.html"));
 
 			// The KaTeX_Main is listed in blatex.css under .katex, which the element with id "test" has
 			IWebElement element = chromeDriver.FindElement(By.Id("test"));
