@@ -50,6 +50,9 @@ public static class LayoutEngine
 		options.AddArgument("--headless");
 		options.AddArgument("--disable-gpu");
 		options.AddArgument("--allow-file-access-from-files");
+#if CI
+		options.AddArgument("--whitelisted-ips=\"\"");
+#endif
 
 
 		var driver = new ChromeDriver(options);
