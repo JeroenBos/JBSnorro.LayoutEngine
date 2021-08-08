@@ -18,7 +18,7 @@ namespace SeleniumLayoutEngine.Tests
 		public void BodylessHtmlDoesntRaiseException()
 		{
 			// Arrange
-			using var driver = LayoutEngine.OpenPage("Bodyless.html");
+			using var driver = LayoutEngine.OpenPage(Path.GetFullPath("Bodyless.html"));
 			IMeasurer<object> measurer = new DummyMeasurer();
 
 			// Act
@@ -36,7 +36,7 @@ namespace SeleniumLayoutEngine.Tests
 		public void Explicit_Sizes_Can_Be_Read_From_Div()
 		{
 			// Arrange
-			using var driver = LayoutEngine.OpenPage("OneElementWithSizes.html");
+			using var driver = LayoutEngine.OpenPage(Path.GetFullPath("OneElementWithSizes.html"));
 			var measurer = new BoundingRectMeasurer();
 
 			// Act
