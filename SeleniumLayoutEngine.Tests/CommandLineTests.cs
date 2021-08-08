@@ -25,12 +25,11 @@ namespace SeleniumLayoutEngine.Tests
 0,0,0,0
 0,0,0,0
 ".Replace("\r", "");
-				Console.Error.Write(stdErr.ToString());
 				Assert.AreEqual("", stdErr.ToString());
 				Assert.AreEqual(expected, output);
 			}
 		}
-		//[Test]
+		[Test]
 		public async Task Open_One_Element_With_Sizes_Print_The_Size()
 		{
 			using (new CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr))
