@@ -56,7 +56,7 @@ public static class LayoutEngine
 
 
 		var driver = new ChromeDriver(options);
-		Console.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
+		System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
 		driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 		return driver;
 	}

@@ -12,12 +12,24 @@ namespace SeleniumLayoutEngine.Tests
 		[Test]
 		public async Task Open_Index()
 		{
-			using (new CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr))
+			CaptureStdOut output;
+			using (output = new CaptureStdOut())
 			{
 				await Program.Main(new string[] { "--dir", "." });
-				string? output = stdOut.ToString();
+			}
 
-				string expected = @"0,0,800,600
+
+			// CI debugging statements
+			if (!string.IsNullOrEmpty(output.StdErr))
+			{
+				Console.WriteLine("StdErr:");
+				Console.WriteLine(output.StdErr);
+			}
+			Console.WriteLine("StdOut:");
+			Console.WriteLine(output.StdOut);
+
+			Assert.AreEqual("", output.StdErr);
+			string expected = @"0,0,800,600
 0,0,800,600
 0,0,800,0
 0,0,0,0
@@ -25,67 +37,67 @@ namespace SeleniumLayoutEngine.Tests
 0,0,0,0
 0,0,0,0
 ".Replace("\r", "");
-				Assert.AreEqual("", stdErr.ToString());
-				Assert.AreEqual(expected, output);
-			}
+			Assert.AreEqual(expected, output.StdOut);
 		}
 		[Test]
 		public async Task Open_One_Element_With_Sizes_Print_The_Size()
 		{
-			using (new CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr))
+			CaptureStdOut output;
+			using (output = new CaptureStdOut())
 			{
 				await Program.Main(new string[] { "--file", "OneElementWithSizes.html" });
+			}
 
-				Assert.AreEqual("", stdErr.ToString());
+			// CI debugging statements
+			if (!string.IsNullOrEmpty(output.StdErr))
+			{
+				Console.WriteLine("StdErr:");
+				Console.WriteLine(output.StdErr);
+			}
+			Console.WriteLine("StdOut:");
+			Console.WriteLine(output.StdOut);
 
-				string? output = stdOut.ToString();
-				string expected = @"0,0,800,316.5
+
+			Assert.AreEqual("", output.StdErr);
+			string expected = @"0,0,800,316.5
 8,8,784,300.5
 8,8,400.29688,300.5
 0,0,0,0
 ".Replace("\r", "");
-				Assert.AreEqual(expected, output);
-			}
+			Assert.AreEqual(expected, output.StdOut);
 		}
-
 	}
+
 }
 
 class CaptureStdOut : IDisposable
 {
-	private readonly TextWriter? stdOut;
-	private readonly TextWriter? stdErr;
+	private readonly TextWriter originalStdOut;
+	private readonly TextWriter originalStdErr;
+	private readonly TextWriter tmpStdOut;
+	private readonly TextWriter tmpStdErr;
 
-	public CaptureStdOut(out TextWriter stdOut)
+	public string? StdOut { get; private set; }
+	public string? StdErr { get; private set; }
+
+	public CaptureStdOut()
 	{
-		stdOut = new StringWriter();
-		if (stdOut != null)
-		{
-			this.stdOut = Console.Out;
-			Console.SetOut(stdOut);
-		}
-	}
-	public CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr) : this(out stdOut)
-	{
-		stdErr = new StringWriter();
-		if (stdErr != null)
-		{
-			this.stdErr = Console.Error;
-			Console.SetError(stdErr);
-		}
+		this.originalStdOut = Console.Out;
+		this.tmpStdOut = new StringWriter();
+		Console.SetOut(this.tmpStdOut);
+
+		this.originalStdErr = Console.Error;
+		this.tmpStdErr = new StringWriter();
+		Console.SetError(tmpStdErr);
 	}
 	public void Dispose()
 	{
-		if (this.stdOut != null)
-		{
-			Console.SetError(stdOut);
-			this.stdOut.Dispose();
-		}
-		if (this.stdErr != null)
-		{
-			Console.SetError(stdErr);
-			this.stdErr.Dispose();
-		}
+		Console.SetOut(originalStdOut);
+		this.StdOut = tmpStdOut.ToString();
+		this.tmpStdOut.Dispose();
 
+		Console.SetError(originalStdErr);
+		this.StdErr = tmpStdErr.ToString();
+		this.tmpStdErr.Dispose();
 	}
 }
