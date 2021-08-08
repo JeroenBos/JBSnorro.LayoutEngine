@@ -1,7 +1,5 @@
 using System.IO;
 using NUnit.Framework;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium;
 using System.Threading.Tasks;
 using System;
 
@@ -9,7 +7,7 @@ namespace SeleniumLayoutEngine.Tests
 {
 	public class CommandLineTests
 	{
-		[Test]
+		[Test, RetryInCI]
 		public async Task Open_Index()
 		{
 			using (new CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr))
@@ -29,7 +27,7 @@ namespace SeleniumLayoutEngine.Tests
 				Assert.AreEqual(expected, output);
 			}
 		}
-		[Test]
+		[Test, RetryInCI]
 		public async Task Open_One_Element_With_Sizes_Print_The_Size()
 		{
 			using (new CaptureStdOut(out TextWriter stdOut, out TextWriter stdErr))
