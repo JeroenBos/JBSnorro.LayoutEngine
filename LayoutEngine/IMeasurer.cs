@@ -5,7 +5,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using static System.Net.WebRequestMethods;
 
-public interface IMeasurer<out T>
+internal interface IMeasurer<out T>
 {
 	/// <summary>
 	/// Measures the sizes of all html elements on the current page on the specified driver.

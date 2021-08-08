@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Drawing;
 using Newtonsoft.Json;
 
-class Program
+internal class Program
 {
 	public static Task<int> Main(string[] args)
 	{
