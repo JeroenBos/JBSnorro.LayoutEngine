@@ -5,9 +5,9 @@ using System.IO;
 using System.Reflection.Metadata;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using static System.Net.WebRequestMethods;
 using System;
 using OpenQA.Selenium.Remote;
+using System.Globalization;
 
 /// Obtains the <see cref="RectangleF"/> boundingClientRectangle of each <see cref="IWebElement"/>.
 /// </summary>
@@ -43,5 +43,14 @@ public static class BoundingRectMeasurerExtensions
 	public static IReadOnlyDictionary<string, RectangleF> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
 	{
 		return ((IMeasurer<IReadOnlyDictionary<string, RectangleF>>)measurer).Measure(driver);
+	}
+
+	/// <summary>
+	/// Formats the rectangle into 4 comma-separated numbers, with the period as decimal point.
+	/// </summary>
+	public static string Format(this RectangleF rectangle)
+	{
+		return string.Join(',', new float[] { rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height }
+					 .Select(f => f.ToString(CultureInfo.InvariantCulture)));
 	}
 }

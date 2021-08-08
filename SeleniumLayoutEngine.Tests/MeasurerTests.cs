@@ -50,4 +50,17 @@ namespace SeleniumLayoutEngine.Tests
 			Assert.AreEqual(divSizes, new RectangleF(8, 8, 400.296875f, 300.5f));
 		}
 	}
+
+	public class RectangleFormattingTests
+	{
+		[Test]
+		public void TestRectangleFormatter()
+		{
+			var rect = new RectangleF(1, 0, 1 / 3f, 0.2f);
+
+			var formatted = rect.Format();
+
+			Assert.AreEqual("1,0,0.33333334,0.2", formatted);
+		}
+	}
 }
