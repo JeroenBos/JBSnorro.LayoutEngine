@@ -2,6 +2,9 @@
 using OpenQA.Selenium.Remote;
 using System.IO;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 public static class LayoutEngine
 {
@@ -52,6 +55,22 @@ public static class LayoutEngine
 		var driver = new ChromeDriver(options);
 		driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 		return driver;
+	}
+	/// <summary>
+	/// Gets all the bounding client rectangles of the html elements in the specified driver by element xpath.
+	/// </summary>
+	public static IReadOnlyDictionary<string, RectangleF> MeasureBoundingClientsRects(RemoteWebDriver driver)
+	{
+		return new BoundingRectMeasurer().Measure(driver);
+	}
+	/// <summary>
+	/// Gets all the bounding client rectangles of the html elements in the specified driver order by element xpath.
+	/// </summary>
+	public static IEnumerable<RectangleF> GetSortedMeasuredBoundingClientsRects(RemoteWebDriver driver)
+	{
+		return MeasureBoundingClientsRects(driver)
+				  .OrderBy(pair => pair.Key)
+				  .Select(pair => pair.Value);
 	}
 
 	private static string ToFileSystemPath(this string path)
