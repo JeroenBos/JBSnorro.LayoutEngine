@@ -18,7 +18,7 @@ namespace SeleniumLayoutEngine.Tests
 		public void BodylessHtmlDoesntRaiseException()
 		{
 			// Arrange
-			using var driver = LayoutEngine.OpenPage("Bodyless.html");
+			using var driver = LayoutEngine.OpenPage(Path.GetFullPath("Bodyless.html"));
 			IMeasurer<object> measurer = new DummyMeasurer();
 
 			// Act
@@ -36,7 +36,7 @@ namespace SeleniumLayoutEngine.Tests
 		public void Explicit_Sizes_Can_Be_Read_From_Div()
 		{
 			// Arrange
-			using var driver = LayoutEngine.OpenPage("OneElementWithSizes.html");
+			using var driver = LayoutEngine.OpenPage(Path.GetFullPath("OneElementWithSizes.html"));
 			var measurer = new BoundingRectMeasurer();
 
 			// Act
@@ -48,6 +48,19 @@ namespace SeleniumLayoutEngine.Tests
 
 			RectangleF divSizes = sizesByXPath[divXPath];
 			Assert.AreEqual(divSizes, new RectangleF(8, 8, 400.296875f, 300.5f));
+		}
+	}
+
+	public class RectangleFormattingTests
+	{
+		[Test]
+		public void TestRectangleFormatter()
+		{
+			var rect = new RectangleF(1, 0, 1 / 3f, 0.2f);
+
+			var formatted = rect.Format();
+
+			Assert.AreEqual("1,0,0.33333334,0.2", formatted);
 		}
 	}
 }
