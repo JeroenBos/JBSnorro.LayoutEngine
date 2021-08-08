@@ -86,6 +86,6 @@ public static class LayoutEngine
 		return !string.IsNullOrWhiteSpace(path)
 			&& path.IndexOfAny(Path.GetInvalidPathChars().ToArray()) == -1
 			&& Path.IsPathRooted(path)
-			&& !Path.GetPathRoot(path)!.Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
+			&& !Path.GetPathRoot(path)!.Equals("\\", StringComparison.Ordinal);
 	}
 }
