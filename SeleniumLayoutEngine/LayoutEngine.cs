@@ -42,7 +42,7 @@ public static class LayoutEngine
 		if (fullPath.StartsWith("file://"))
 			throw new ArgumentException($"{nameof(fullPath)} shouldn't start with 'file://'", nameof(fullPath));
 		if (!IsFullPath(fullPath))
-			throw new ArgumentException("Not a full path", nameof(fullPath));
+			throw new ArgumentException($"'{fullPath}' is not a full path", nameof(fullPath));
 		if (!File.Exists(fullPath))
 			throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
 
