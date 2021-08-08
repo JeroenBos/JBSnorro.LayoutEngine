@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using static Extensions;
 
 public static class LayoutEngine
 {
@@ -71,50 +72,5 @@ public static class LayoutEngine
 		return MeasureBoundingClientsRects(driver)
 				  .OrderBy(pair => pair.Key)
 				  .Select(pair => pair.Value);
-	}
-
-	private static string ToFileSystemPath(this string path)
-	{
-		if (!path.StartsWith("file:"))
-			path = "file:///" + path;
-		return path;
-	}
-
-	/// <summary> Gets whether the path is a full path in the current OS. </summary>
-	/// <see href="https://stackoverflow.com/a/35046453/308451" />
-	public static bool IsFullPath(string path)
-	{
-		if (OperatingSystem.IsWindows())
-			return IsFullPathInWindows(path);
-		else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-			return IsFullPathInUnix(path);
-
-		throw new NotImplementedException("IsFullPath not implemented yet for current OS");
-	}
-	/// <summary> Gets whether the path is a full path. </summary>
-	/// <see href="https://stackoverflow.com/a/2202096/308451"/>
-	public static bool IsFullPathInUnix(string path)
-	{
-		if (string.IsNullOrWhiteSpace(path))
-			return false;
-
-		// check if valid linux path:
-		if (path.Contains((char)0))
-			return false;
-
-		// char 47 is '/', so we can skip checking it
-		if (path.StartsWith("/"))
-			return true;
-
-		return false;
-	}
-	/// <summary> Gets whether the path is a full path. </summary>
-	/// <see href="https://stackoverflow.com/a/35046453/308451" />
-	public static bool IsFullPathInWindows(string path)
-	{
-		return !string.IsNullOrWhiteSpace(path)
-			&& path.IndexOfAny(Path.GetInvalidPathChars().ToArray()) == -1
-			&& Path.IsPathRooted(path)
-			&& !(Path.GetPathRoot(path)?.Equals("\\", StringComparison.Ordinal) ?? false);
 	}
 }

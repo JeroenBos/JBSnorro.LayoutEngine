@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace SeleniumLayoutEngine.Tests
 {
@@ -78,36 +77,6 @@ namespace SeleniumLayoutEngine.Tests
 ".Replace("\r", "");
 			string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
 			Assert.AreEqual(expected, stdOut);
-		}
-	}
-	static class Extensions
-	{
-		/// <summary> Returns the index of the first element matching the specified predicate. Returns -1 if no elements match it. </summary>
-		/// <typeparam name="T"> The type of the elements. </typeparam>
-		/// <param name="sequence"> The elements to check for a match. </param>
-		/// <param name="predicate"> The function determining whether an element matches. </param>
-		public static int IndexOf<T>(this IEnumerable<T> sequence, Func<T, bool> predicate)
-		{
-			return sequence.IndexOf((element, i) => predicate(element));
-		}
-		/// <summary> Returns the index of the first element matching the specified predicate. Returns -1 if no elements match it. </summary>
-		/// <typeparam name="T"> The type of the elements. </typeparam>
-		/// <param name="sequence"> The elements to check for a match. </param>
-		/// <param name="predicate"> The function determining whether an element matches. </param>
-		public static int IndexOf<T>(this IEnumerable<T> sequence, Func<T, int, bool> predicate)
-		{
-			if (sequence == null) throw new ArgumentNullException();
-			if (predicate == null) throw new ArgumentNullException();
-
-			int i = 0;
-			foreach (T element in sequence)
-			{
-				if (predicate(element, i))
-					return i;
-				i++;
-			}
-
-			return -1;
 		}
 	}
 }
