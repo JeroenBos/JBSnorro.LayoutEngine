@@ -10,29 +10,39 @@ namespace SeleniumLayoutEngine.Tests
 {
 	public class MeasurerTests
 	{
-		class DummyMeasurer : Measurer<object>
+		class DummyMeasurer : IMeasurer<object>
 		{
-			protected override IWebElement Measure(IWebElement element, RemoteWebDriver _) => element;
+			object IMeasurer<object>.Measure(IWebElement element, RemoteWebDriver driver) => element;
 		}
 		[Test]
 		public void BodylessHtmlDoesntRaiseException()
 		{
-			var measurer = new DummyMeasurer();
-			IWebElement? body = (IWebElement?)measurer.Measure("bodyless.html");
+			// Arrange
+			using var driver = LayoutEngine.OpenPage("Bodyless.html");
+			IMeasurer<object> measurer = new DummyMeasurer();
 
+			// Act
+			IWebElement body = (IWebElement)measurer.Measure(driver);
+
+			// Assert
 			Assert.IsNotNull(body);
-			Assert.Throws<WebDriverException>(() => { var _ = body!.TagName; });
+			Assert.AreEqual("body", body!.TagName);
 		}
 	}
 
 	public class BoundingRectsMeasurerTests
 	{
 		[Test]
-		public void BodylessHtmlDoesntRaiseException()
+		public void Explicit_Sizes_Can_Be_Read_From_Div()
 		{
+			// Arrange
+			using var driver = LayoutEngine.OpenPage("OneElementWithSizes.html");
 			var measurer = new BoundingRectMeasurer();
-			var sizesByXPath = measurer.Measure("OneElementWithSizes.html")!;
 
+			// Act
+			var sizesByXPath = measurer.Measure(driver)!;
+
+			// Assert
 			const string divXPath = "/HTML[1]/BODY[1]/DIV[1]";
 			Assert.IsTrue(sizesByXPath.ContainsKey(divXPath));
 

@@ -9,13 +9,15 @@ using static System.Net.WebRequestMethods;
 using System;
 using OpenQA.Selenium.Remote;
 
-/// <summary>
 /// Obtains the <see cref="RectangleF"/> boundingClientRectangle of each <see cref="IWebElement"/>.
 /// </summary>
-public class BoundingRectMeasurer : Measurer<IReadOnlyDictionary<string, RectangleF>>
+public class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, RectangleF>>
 {
-	protected override IReadOnlyDictionary<string, RectangleF> Measure(IWebElement element, RemoteWebDriver driver)
+	IReadOnlyDictionary<string, RectangleF> IMeasurer<IReadOnlyDictionary<string, RectangleF>>.Measure(IWebElement element, RemoteWebDriver driver)
 	{
+		if (element.TagName != "body")
+			throw new Exception("Expected html body element to have tag 'body'");
+
 		string jsFunctionName = "getBoundingClientRect";
 		string jsFunction = $"function {jsFunctionName}(element) {{ return element.getBoundingClientRect(); }}";
 		RectangleF converter(object boundingRectReturnValue)
@@ -31,5 +33,15 @@ public class BoundingRectMeasurer : Measurer<IReadOnlyDictionary<string, Rectang
 
 		var result = driver.ForeachXPaths(jsFunction, jsFunctionName, converter);
 		return result;
+	}
+}
+public static class BoundingRectMeasurerExtensions
+{
+	/// <inheritdoc cref="IMeasurer{T}.Measure(IWebElement, RemoteWebDriver)"/>
+	/// <remarks> This method is implemented as extension method instead of instance method to allow for calling the base default interface method
+	/// and to ease the developer's life by allowing to call the default interface method without casting. </remarks>
+	public static IReadOnlyDictionary<string, RectangleF> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
+	{
+		return ((IMeasurer<IReadOnlyDictionary<string, RectangleF>>)measurer).Measure(driver);
 	}
 }
