@@ -1,14 +1,24 @@
-using System.IO;
 using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace SeleniumLayoutEngine.Tests
 {
 	public class CommandLineTests
 	{
+		private static string SkipCIConnectionFailedLines(string output)
+		{
+			string[] lines = output.Split('\n');
+			int firstNonErrorLineIndex = lines.IndexOf(line => !line.StartsWith("Connection refused [::ffff:127.0.0.1]:"));
+			if (firstNonErrorLineIndex == -1)
+				firstNonErrorLineIndex = 0;
+			return string.Join('\n', lines.Skip(firstNonErrorLineIndex));
+		}
 		[Test]
 		public async Task Open_Index()
 		{
@@ -18,15 +28,15 @@ namespace SeleniumLayoutEngine.Tests
 				await Program.Main(new string[] { "--dir", "." });
 			}
 
-
-			// CI debugging statements
+			#region CI debugging statements
 			if (!string.IsNullOrEmpty(output.StdErr))
 			{
 				Console.WriteLine("StdErr:");
 				Console.WriteLine(output.StdErr);
 			}
-			Console.WriteLine("StdOut:");
-			Console.WriteLine(output.StdOut);
+			//Console.WriteLine("StdOut:");
+			//Console.WriteLine(output.StdOut);
+			#endregion
 
 			Assert.AreEqual("", output.StdErr);
 			string expected = @"0,0,800,600
@@ -37,7 +47,8 @@ namespace SeleniumLayoutEngine.Tests
 0,0,0,0
 0,0,0,0
 ".Replace("\r", "");
-			Assert.AreEqual(expected, output.StdOut);
+			string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+			Assert.AreEqual(expected, stdOut);
 		}
 		[Test]
 		public async Task Open_One_Element_With_Sizes_Print_The_Size()
@@ -48,14 +59,15 @@ namespace SeleniumLayoutEngine.Tests
 				await Program.Main(new string[] { "--file", "OneElementWithSizes.html" });
 			}
 
-			// CI debugging statements
+			#region CI debugging statements
 			if (!string.IsNullOrEmpty(output.StdErr))
 			{
 				Console.WriteLine("StdErr:");
 				Console.WriteLine(output.StdErr);
 			}
-			Console.WriteLine("StdOut:");
-			Console.WriteLine(output.StdOut);
+			//Console.WriteLine("StdOut:");
+			//Console.WriteLine(output.StdOut);
+			#endregion
 
 
 			Assert.AreEqual("", output.StdErr);
@@ -64,40 +76,38 @@ namespace SeleniumLayoutEngine.Tests
 8,8,400.29688,300.5
 0,0,0,0
 ".Replace("\r", "");
-			Assert.AreEqual(expected, output.StdOut);
+			string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+			Assert.AreEqual(expected, stdOut);
 		}
 	}
-
-}
-
-class CaptureStdOut : IDisposable
-{
-	private readonly TextWriter originalStdOut;
-	private readonly TextWriter originalStdErr;
-	private readonly TextWriter tmpStdOut;
-	private readonly TextWriter tmpStdErr;
-
-	public string? StdOut { get; private set; }
-	public string? StdErr { get; private set; }
-
-	public CaptureStdOut()
+	static class Extensions
 	{
-		this.originalStdOut = Console.Out;
-		this.tmpStdOut = new StringWriter();
-		Console.SetOut(this.tmpStdOut);
+		/// <summary> Returns the index of the first element matching the specified predicate. Returns -1 if no elements match it. </summary>
+		/// <typeparam name="T"> The type of the elements. </typeparam>
+		/// <param name="sequence"> The elements to check for a match. </param>
+		/// <param name="predicate"> The function determining whether an element matches. </param>
+		public static int IndexOf<T>(this IEnumerable<T> sequence, Func<T, bool> predicate)
+		{
+			return sequence.IndexOf((element, i) => predicate(element));
+		}
+		/// <summary> Returns the index of the first element matching the specified predicate. Returns -1 if no elements match it. </summary>
+		/// <typeparam name="T"> The type of the elements. </typeparam>
+		/// <param name="sequence"> The elements to check for a match. </param>
+		/// <param name="predicate"> The function determining whether an element matches. </param>
+		public static int IndexOf<T>(this IEnumerable<T> sequence, Func<T, int, bool> predicate)
+		{
+			if (sequence == null) throw new ArgumentNullException();
+			if (predicate == null) throw new ArgumentNullException();
 
-		this.originalStdErr = Console.Error;
-		this.tmpStdErr = new StringWriter();
-		Console.SetError(tmpStdErr);
-	}
-	public void Dispose()
-	{
-		Console.SetOut(originalStdOut);
-		this.StdOut = tmpStdOut.ToString();
-		this.tmpStdOut.Dispose();
+			int i = 0;
+			foreach (T element in sequence)
+			{
+				if (predicate(element, i))
+					return i;
+				i++;
+			}
 
-		Console.SetError(originalStdErr);
-		this.StdErr = tmpStdErr.ToString();
-		this.tmpStdErr.Dispose();
+			return -1;
+		}
 	}
 }
