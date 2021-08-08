@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeleniumLayoutEngine", "SeleniumLayoutEngine\SeleniumLayoutEngine.csproj", "{9D978C98-C987-4CF2-8461-4C1B6D6069A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutEngine", "LayoutEngine\LayoutEngine.csproj", "{9D978C98-C987-4CF2-8461-4C1B6D6069A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ABE460FE-B231-4091-B84D-6F4F6A14B86B}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\CI.yml = .github\workflows\CI.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeleniumLayoutEngine.Tests", "SeleniumLayoutEngine.Tests\SeleniumLayoutEngine.Tests.csproj", "{7890029A-39DC-42FC-9BAD-802AF05A0097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutEngine.Tests", "LayoutEngine.Tests\LayoutEngine.Tests.csproj", "{7890029A-39DC-42FC-9BAD-802AF05A0097}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

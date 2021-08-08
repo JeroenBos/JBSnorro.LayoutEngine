@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
-public static class IJavaScriptExecutorExtensions
+internal static class IJavaScriptExecutorExtensions
 {
 	/// <summary>
 	/// JS source code of a function `getXPath` that gets the XPath of a given xml node.

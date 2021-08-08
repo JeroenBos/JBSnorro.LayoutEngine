@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-static class Extensions
+public static class Extensions
 {
 	/// <summary> Returns the index of the first element matching the specified predicate. Returns -1 if no elements match it. </summary>
 	/// <typeparam name="T"> The type of the elements. </typeparam>

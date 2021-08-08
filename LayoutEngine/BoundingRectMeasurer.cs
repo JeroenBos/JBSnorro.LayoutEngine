@@ -11,7 +11,7 @@ using System.Globalization;
 
 /// Obtains the <see cref="RectangleF"/> boundingClientRectangle of each <see cref="IWebElement"/>.
 /// </summary>
-public class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, RectangleF>>
+internal class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, RectangleF>>
 {
 	IReadOnlyDictionary<string, RectangleF> IMeasurer<IReadOnlyDictionary<string, RectangleF>>.Measure(IWebElement element, RemoteWebDriver driver)
 	{
@@ -35,7 +35,7 @@ public class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, Rectan
 		return result;
 	}
 }
-public static class BoundingRectMeasurerExtensions
+internal static class BoundingRectMeasurerExtensions
 {
 	/// <inheritdoc cref="IMeasurer{T}.Measure(IWebElement, RemoteWebDriver)"/>
 	/// <remarks> This method is implemented as extension method instead of instance method to allow for calling the base default interface method
