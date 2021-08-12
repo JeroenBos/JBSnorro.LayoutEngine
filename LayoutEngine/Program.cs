@@ -82,7 +82,9 @@ namespace JBSnorro.Web
 		{
 			string path = Path.GetFullPath(Path.Combine(dir, "chromedriver.exe"));
 			if (!File.Exists(path))
+			{
 				File.WriteAllBytes(path, Resources.chromedriver);
+			}
 		}
 	}
 }
