@@ -5,6 +5,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System.Drawing;
+using JBSnorro.Web;
+using LayoutEngine = JBSnorro.Web.LayoutEngine;
 
 public class MeasurerTests
 {

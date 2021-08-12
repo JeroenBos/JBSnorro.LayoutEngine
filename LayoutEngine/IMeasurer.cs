@@ -5,20 +5,23 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using static System.Net.WebRequestMethods;
 
-internal interface IMeasurer<out T>
+namespace JBSnorro.Web
 {
-	/// <summary>
-	/// Measures the sizes of all html elements on the current page on the specified driver.
-	/// </summary>
-	T Measure(RemoteWebDriver driver)
+	internal interface IMeasurer<out T>
 	{
-		IWebElement body = driver.FindElementByXPath("//body");
+		/// <summary>
+		/// Measures the sizes of all html elements on the current page on the specified driver.
+		/// </summary>
+		T Measure(RemoteWebDriver driver)
+		{
+			IWebElement body = driver.FindElementByXPath("//body");
 
-		if (body.TagName != "body")
-			throw new Exception("Expected html body element to have tag 'body'");
+			if (body.TagName != "body")
+				throw new Exception("Expected html body element to have tag 'body'");
 
-		return Measure(body, driver);
+			return Measure(body, driver);
+		}
+
+		T Measure(IWebElement element, RemoteWebDriver driver);
 	}
-
-	T Measure(IWebElement element, RemoteWebDriver driver);
 }
