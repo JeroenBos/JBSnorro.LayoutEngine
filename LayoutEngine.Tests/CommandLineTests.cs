@@ -38,7 +38,8 @@ public class CommandLineTests
 		#endregion
 
 		Assert.AreEqual("", output.StdErr);
-		string expected = @"0,0,800,600
+		string expected = @"########## RECTANGLES INCOMING ##########
+0,0,800,600
 0,0,800,600
 0,0,800,0
 0,0,0,0
@@ -70,7 +71,8 @@ public class CommandLineTests
 
 
 		Assert.AreEqual("", output.StdErr);
-		string expected = @"0,0,800,316.5
+		string expected = @"########## RECTANGLES INCOMING ##########
+0,0,800,316.5
 8,8,784,300.5
 8,8,400.29688,300.5
 0,0,0,0
