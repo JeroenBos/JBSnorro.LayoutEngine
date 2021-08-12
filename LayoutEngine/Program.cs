@@ -72,6 +72,7 @@ namespace JBSnorro.Web
 				var rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
 				cancellationToken.ThrowIfCancellationRequested();
 
+				Console.WriteLine("########## RECTANGLES INCOMING ##########");
 				foreach (var rectangle in rectangles)
 				{
 					Console.WriteLine(rectangle.Format());
