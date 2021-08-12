@@ -30,5 +30,5 @@ When publishing, make sure the Configuration is set to Release, otherwise all ki
 Publishing the linux configuration doesn't work in the VS UI. 
 Use this bash command instead:
 ```
-dotnet publish -c Release -r linux-x64 -o bin/publish/linux
+dotnet publish -c Release -r linux-x64 -o publish
 ```

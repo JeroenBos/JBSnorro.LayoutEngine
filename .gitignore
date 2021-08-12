@@ -188,6 +188,8 @@ publish/
 *.publishproj
 
 !**/PublishProfiles/*.pubxml
+publish/*.pdb
+!publish/
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
