@@ -26,3 +26,13 @@ The html page must be a local file. It may refer to other files like `*.css`.
 
 # Note to developer:
 When publishing, make sure the Configuration is set to Release, otherwise all kinds of errors can occur.
+
+To test in WSL, be sure to start your bash with administrator privileges. 
+This should work:
+```bash
+dotnet publish --runtime linux-x64
+cd LayoutEngine/bin/publish/linux
+ "./LayoutEngine" --file "../../../../LayoutEngine.Tests/Bodyless.html"
+ ```
+
+ "./LayoutEngine/bin/publish/linux/LayoutEngine" --file "./LayoutEngine.Tests/Bodyless.html"
