@@ -1,4 +1,5 @@
-﻿
+﻿using JBSnorro;
+
 namespace System.CommandLine
 {
 	public static class CommandLineExtensions
@@ -23,9 +24,9 @@ namespace System.CommandLine
 		}
 
 		public static Option<T> With<T>(this Option<T> option,
-								        Maybe<string> description = default,
-								        Maybe<T> defaultValue = default,
-								        Maybe<bool> required = default)
+										Maybe<string> description = default,
+										Maybe<T> defaultValue = default,
+										Maybe<bool> required = default)
 		{
 			if (description.HasValue)
 				option.Description = description.Value;

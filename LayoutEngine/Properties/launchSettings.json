@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LayoutEngine": {
+      "commandName": "Project",
+      "commandLineArgs": "--file ..\\..\\..\\..\\LayoutEngine.Tests\\Bodyless.html"
+    }
+  }
+}

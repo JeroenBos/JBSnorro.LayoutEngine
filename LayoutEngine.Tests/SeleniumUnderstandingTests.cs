@@ -2,6 +2,7 @@ using System.IO;
 using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
+using JBSnorro;
 
 public class SeleniumUnderstandingTests
 {

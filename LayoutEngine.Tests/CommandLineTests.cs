@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using JBSnorro;
+using JBSnorro.Web;
 
 public class CommandLineTests
 {
