@@ -81,9 +81,12 @@ namespace JBSnorro.Web
 		}
 		public static void EnsureDriverExtracted(string dir = "./")
 		{
-			string path = Path.GetFullPath(Path.Combine(dir, "chromedriver.exe"));
+			string filename = "chromedriver" + (OperatingSystem.IsWindows() ? ".exe" : "");
+			string path = Path.GetFullPath(Path.Combine(dir, filename));
 			if (!File.Exists(path))
+			{
 				File.WriteAllBytes(path, Resources.chromedriver);
+			}
 		}
 	}
 }

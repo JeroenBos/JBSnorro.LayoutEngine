@@ -7,7 +7,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win10-x64
+          - os: ubuntu-latest
+            runtime: linux-x64
   
     steps:
     - uses: actions/checkout@v1
@@ -18,7 +25,9 @@ jobs:
         dotnet-version: 6.0.100-preview.6.21355.2
         include-prerelease: true
     - name: build
-      run: dotnet build --configuration CI
+      run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }}
+    - name: build test
+      run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }}
     - name: test
-      run: dotnet test --configuration CI
+      run: dotnet test --configuration CI --runtime ${{ matrix.runtime }}
       timeout-minutes: 5
