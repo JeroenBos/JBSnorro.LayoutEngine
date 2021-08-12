@@ -53,6 +53,8 @@ namespace JBSnorro.Web
 			options.AddArgument("--headless");
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
+			options.AddArgument("--disable-logging");
+			options.AddArgument("--output=/dev/null");
 
 			var driver = new ChromeDriver(options);
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");

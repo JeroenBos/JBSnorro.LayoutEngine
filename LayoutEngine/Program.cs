@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
@@ -13,7 +14,7 @@ using OpenQA.Selenium.Remote;
 using System.Text;
 using System.Globalization;
 using System.Drawing;
-using Newtonsoft.Json;
+using JBSnorro.Web;
 
 namespace JBSnorro.Web
 {
@@ -66,11 +67,16 @@ namespace JBSnorro.Web
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
-				cancellationToken.ThrowIfCancellationRequested();
-
-				var rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
-				cancellationToken.ThrowIfCancellationRequested();
+				IEnumerable<RectangleF> rectangles;
+				
+				using (var stderrRedirecter = StdErrRedirecter.RedirectNowhere())
+				using (var stdoutRedirecter = StdOutRedirecter.RedirectNowhere())
+				using (var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!))
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
+					cancellationToken.ThrowIfCancellationRequested();
+				}
 
 				foreach (var rectangle in rectangles)
 				{
