@@ -24,7 +24,7 @@ layoutengine --dir "/path/to/dir/containing/an/index.html" | sed "0,/########## 
 
 The html page must be a local file. It may refer to other files like `*.css`.
 
-# Note to developer:
+### Notes to developer:
 When publishing, make sure the Configuration is set to Release, otherwise all kinds of errors can occur.
 
 Publishing the linux configuration doesn't work in the VS UI. 
