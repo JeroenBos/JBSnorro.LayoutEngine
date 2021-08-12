@@ -20,8 +20,10 @@ public class ExtractDriverTests
 		string path = Path.Combine(dir, $"chromedriver{extension}");
 		Assert.IsTrue(File.Exists(path));
 
-		int expectedHashCode = File.ReadAllBytes($"../../../../LayoutEngine/chromedriver{extension}").ComputeHashCode();
-		Assert.AreEqual(expectedHashCode, File.ReadAllBytes(path).ComputeHashCode());
+		int expectedHashCode = OperatingSystem.IsWindows() ? 847548445 : 1081775203;
+		// the following does not work in CI, because the path has 1 extra depth (the runtime identifier):
+		// int expectedHashCode = File.ReadAllBytes($"../../../../LayoutEngine/chromedriver{extension}").ComputeHashCode();
 
+		Assert.AreEqual(expectedHashCode, File.ReadAllBytes(path).ComputeHashCode());
 	}
 }
