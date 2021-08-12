@@ -28,30 +28,32 @@
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
 	</ItemGroup>
 
-
 	<ItemGroup Condition="'$(RuntimeIdentifier)'=='win10-x64'">
-		<Compile Update="Properties\Resources.win10.Designer.cs">
-			<DependentUpon>Resources.win10.resx</DependentUpon>
-			<DesignTime>False</DesignTime>
-			<AutoGen>False</AutoGen>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
 		</Compile>
-		<EmbeddedResource Update="Properties\Resources.win10.resx">
+		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.win10.Designer.cs</LastGenOutput>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 			<CustomToolNamespace>JBSnorro.Web</CustomToolNamespace>
 		</EmbeddedResource>
+		<EmbeddedResource Remove="Properties\Resources.Linux.resx" />
+		<Compile Remove="Properties\Resources.Linux.Designer.cs" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(RuntimeIdentifier)'=='linux-x64'">
-		<Compile Update="Properties\Resources.linux.Designer.cs">
-			<DependentUpon>Resources.linux.resx</DependentUpon>
+		<Compile Update="Properties\Resources.Linux.Designer.cs">
 			<DesignTime>False</DesignTime>
 			<AutoGen>False</AutoGen>
+			<DependentUpon>Resources.Linux.resx</DependentUpon>
 		</Compile>
-		<EmbeddedResource Update="Properties\Resources.linux.resx">
+		<EmbeddedResource Update="Properties\Resources.Linux.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>Resources.linux.Designer.cs</LastGenOutput>
+			<LastGenOutput>Resources.Linux.Designer.cs</LastGenOutput>
 			<CustomToolNamespace>JBSnorro.Web</CustomToolNamespace>
 		</EmbeddedResource>
+		<EmbeddedResource Remove="Properties\Resources.resx" />
+		<Compile Remove="Properties\Resources.Designer.cs" />
 	</ItemGroup>
-
 </Project>
