@@ -17,7 +17,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Gets the rectangles if if exists in the cache.
 		/// </summary>
-		public async Task<(IEnumerable<RectangleF>? Rectangles, string Hash)> TryGetValue(string? file, string? dir, string cachePath)
+		public async Task<(IEnumerable<TaggedRectangle>? Rectangles, string Hash)> TryGetValue(string? file, string? dir, string cachePath)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
@@ -32,7 +32,7 @@ namespace JBSnorro.Web
 
 			return (null, hash);
 		}
-		public Task Write(string? file, string? dir, string hash, IEnumerable<RectangleF> rectangles, string cachePath)
+		public Task Write(string? file, string? dir, string hash, IEnumerable<TaggedRectangle> rectangles, string cachePath)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
@@ -122,16 +122,18 @@ namespace JBSnorro.Web
 			}
 
 
-			public IEnumerable<RectangleF> Rectangles
+			public IEnumerable<TaggedRectangle> Rectangles
 			{
 				get
 				{
 					return Output.Select(line =>
 					{
-						var values = line.Split(",").Select(float.Parse).ToArray();
-						if (values.Length != 4)
-							throw new Exception("Expected 4 values for rectangle");
-						return new RectangleF(values[0], values[1], values[2], values[3]);
+						var parts = line.Split(",");
+						if (parts.Length != 5)
+							throw new Exception("Expected a tag and 4 values for rectangle");
+						var tag = parts[0];
+						var values = parts[1..].Select(float.Parse).ToArray();
+						return new TaggedRectangle(tag, values[0], values[1], values[2], values[3]);
 					});
 				}
 				init
@@ -139,7 +141,7 @@ namespace JBSnorro.Web
 					if (this.Output != null)
 						throw new ArgumentException("Rectangles can only be set when Output isn't");
 
-					this.Output = value.Select(BoundingRectMeasurerExtensions.Format).ToArray();
+					this.Output = value.Select(r => r.Format()).ToArray();
 				}
 			}
 			public IEnumerable<string> Lines

@@ -46,20 +46,20 @@ public class BoundingRectsMeasurerTests
 		const string divXPath = "/HTML[1]/BODY[1]/DIV[1]";
 		Assert.IsTrue(sizesByXPath.ContainsKey(divXPath));
 
-		RectangleF divSizes = sizesByXPath[divXPath];
-		Assert.AreEqual(divSizes, new RectangleF(8, 8, 400.296875f, 300.5f));
+		TaggedRectangle divSizes = sizesByXPath[divXPath];
+		Assert.AreEqual(divSizes, new TaggedRectangle("div", 8, 8, 400.296875f, 300.5f));
 	}
 }
 
-public class RectangleFormattingTests
+public class TaggedRectangleFormattingTests
 {
 	[Test]
-	public void TestRectangleFormatter()
+	public void TestTaggedRectangleormatter()
 	{
-		var rect = new RectangleF(1, 0, 1 / 3f, 0.2f);
+		var rect = new TaggedRectangle("div", 1, 0, 1 / 3f, 0.2f);
 
 		var formatted = rect.Format();
 
-		Assert.AreEqual("1,0,0.33333334,0.2", formatted);
+		Assert.AreEqual("div,1,0,0.33333334,0.2", formatted);
 	}
 }

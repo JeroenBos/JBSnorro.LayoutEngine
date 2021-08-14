@@ -39,13 +39,13 @@ public class CommandLineTests
 
 		Assert.AreEqual("", output.StdErr);
 		string expected = @"########## RECTANGLES INCOMING ##########
-0,0,800,600
-0,0,800,600
-0,0,800,0
-0,0,0,0
-0,0,0,0
-0,0,0,0
-0,0,0,0
+HTML,0,0,800,600
+BODY,0,0,800,600
+DIV,0,0,800,0
+HEAD,0,0,0,0
+LINK,0,0,0,0
+META,0,0,0,0
+STYLE,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
 		Assert.AreEqual(expected, stdOut);

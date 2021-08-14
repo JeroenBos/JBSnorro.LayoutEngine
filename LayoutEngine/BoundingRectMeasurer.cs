@@ -11,21 +11,22 @@ using System.Globalization;
 
 namespace JBSnorro.Web
 {
-	/// Obtains the <see cref="RectangleF"/> boundingClientRectangle of each <see cref="IWebElement"/>.
+	/// Obtains the <see cref="TaggedRectangle"/> boundingClientRectangle of each <see cref="IWebElement"/>.
 	/// </summary>
-	internal class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, RectangleF>>
+	internal class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>
 	{
-		IReadOnlyDictionary<string, RectangleF> IMeasurer<IReadOnlyDictionary<string, RectangleF>>.Measure(IWebElement element, RemoteWebDriver driver)
+		IReadOnlyDictionary<string, TaggedRectangle> IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>.Measure(IWebElement element, RemoteWebDriver driver)
 		{
 			if (element.TagName != "body")
 				throw new Exception("Expected html body element to have tag 'body'");
 
 			string jsFunctionName = "getBoundingClientRect";
-			string jsFunction = $"function {jsFunctionName}(element) {{ return element.getBoundingClientRect(); }}";
-			RectangleF converter(object boundingRectReturnValue)
+			string jsFunction = $"function {jsFunctionName}(element) {{ var rect = element.getBoundingClientRect(); rect.tagName = element.tagName; return rect; }}";
+			TaggedRectangle converter(object boundingRectReturnValue)
 			{
 				var boundingRect = (IReadOnlyDictionary<string, object>)boundingRectReturnValue;
-				return new RectangleF(
+				return new TaggedRectangle(
+					(string)boundingRect["tagName"],
 					Convert.ToSingle(boundingRect["x"]),
 					Convert.ToSingle(boundingRect["y"]),
 					Convert.ToSingle(boundingRect["width"]),
@@ -42,18 +43,9 @@ namespace JBSnorro.Web
 		/// <inheritdoc cref="IMeasurer{T}.Measure(IWebElement, RemoteWebDriver)"/>
 		/// <remarks> This method is implemented as extension method instead of instance method to allow for calling the base default interface method
 		/// and to ease the developer's life by allowing to call the default interface method without casting. </remarks>
-		public static IReadOnlyDictionary<string, RectangleF> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
+		public static IReadOnlyDictionary<string, TaggedRectangle> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
 		{
-			return ((IMeasurer<IReadOnlyDictionary<string, RectangleF>>)measurer).Measure(driver);
-		}
-
-		/// <summary>
-		/// Formats the rectangle into 4 comma-separated numbers, with the period as decimal point.
-		/// </summary>
-		public static string Format(this RectangleF rectangle)
-		{
-			return string.Join(',', new float[] { rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height }
-						 .Select(f => f.ToString(CultureInfo.InvariantCulture)));
+			return ((IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>)measurer).Measure(driver);
 		}
 	}
 }
