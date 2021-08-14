@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace JBSnorro
 {
@@ -89,15 +90,15 @@ namespace JBSnorro
 		/// <summary>
 		/// Quick and dirty get hash code implementation taking into account contents of the byte array.
 		/// </summary>
-		public static int ComputeHashCode(this byte[]? data)
+		public static nint ComputeHash(this byte[]? data)
 		{
 			if (data == null)
 			{
 				return 0;
 			}
 
-			int i = data.Length;
-			int hc = i + 1;
+			nint i = data.Length;
+			nint hc = i + 1;
 
 			while (--i >= 0)
 			{
@@ -106,6 +107,60 @@ namespace JBSnorro
 			}
 
 			return hc;
+		}
+		/// <summary>
+		/// Quick and dirty get hash code implementation taking into account contents of the string.
+		/// </summary>
+		public static nint ComputeHash(this string data)
+		{
+			if (data == null)
+			{
+				return 0;
+			}
+
+			int i = data.Length;
+			nint hc = i + 1;
+
+			while (--i >= 0)
+			{
+				hc *= 257;
+				hc ^= data[i];
+			}
+
+			return hc;
+		}
+		/// <summary>
+		/// Gets all files in the directory, recursively.
+		/// </summary>
+		public static IEnumerable<string> GetAllFilenamesRecursively(this string dir, string pattern = "*")
+		{
+			return Directory.EnumerateFiles(dir, pattern, SearchOption.AllDirectories);
+		}
+		/// <summary>
+		/// Hashes the contents of the specified file.
+		/// </summary>
+		public static nint ComputeFileHash(this string path)
+		{
+			var bytes = File.ReadAllBytes(path);
+			return bytes.ComputeHash();
+		}
+		/// <summary>
+		/// Hashes the contents of the specified file.
+		/// </summary>
+		public static async Task<nint> ComputeFileHashCodeAsync(this string path)
+		{
+			var bytes = await File.ReadAllBytesAsync(path);
+			return bytes.ComputeHash();
+		}
+		/// <summary>
+		/// Sums all specified numbers, without overflow exceptions.
+		/// </summary>
+		public static nint Sum(this IEnumerable<nint> summands)
+		{
+			nint result = 0;
+			foreach (var summand in summands)
+				result += summand;
+			return result;
 		}
 	}
 }
