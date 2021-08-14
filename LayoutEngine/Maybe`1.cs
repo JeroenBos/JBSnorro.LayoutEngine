@@ -118,7 +118,7 @@ namespace JBSnorro
 			}
 		}
 	}
-	public static class Option
+	public static class Maybe
 	{
 		/// <summary>
 		/// Allows omitting the type parameter to option when using <see cref="Option{T}.Some(T)"/>
