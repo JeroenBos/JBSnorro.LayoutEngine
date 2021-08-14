@@ -3,7 +3,6 @@ using OpenQA.Selenium.Remote;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using static JBSnorro.Extensions;
 

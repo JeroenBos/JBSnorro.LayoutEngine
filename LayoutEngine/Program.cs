@@ -12,7 +12,6 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System.Text;
 using System.Globalization;
-using System.Drawing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
