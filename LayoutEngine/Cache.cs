@@ -7,56 +7,44 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using JBSnorro;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace JBSnorro.Web
 {
 	class Cache
 	{
-		private CacheFile? cache;
-		private string? cachePath;
-
-		private static readonly nint layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? (nint)0;
+		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
 		/// <summary>
 		/// Gets the rectangles if if exists in the cache.
 		/// </summary>
-		public async Task<(IEnumerable<RectangleF>? Rectangles, string Hash)> TryGetValue(string? file, string? dir, string cacheFilePath)
+		public async Task<(IEnumerable<RectangleF>? Rectangles, string Hash)> TryGetValue(string? file, string? dir, string cachePath)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
 
-			var hashTask = ComputeHash(file, dir);
-
-			if (this.cache == null)
+			var hash = (await ComputeHash(file, dir)).ToString();
+			var path = Path.Combine(cachePath, hash);
+			if (File.Exists(path))
 			{
-				this.cachePath = cacheFilePath;
-				this.cache = await CacheFile.ReadFrom(cacheFilePath);
-			}
-
-			var hash = (await hashTask).ToString();
-
-			if (this.cache.entries.TryGetValue(hash, out var entry))
-			{
+				var entry = CacheFile.CacheEntry.Parse(File.ReadAllLines(path));
 				return (entry.Rectangles, hash);
 			}
+
 			return (null, hash);
 		}
-		public async Task Write(string? file, string? dir, string hash, IEnumerable<RectangleF> rectangles, string cacheFilePath)
+		public Task Write(string? file, string? dir, string hash, IEnumerable<RectangleF> rectangles, string cachePath)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
-			if (this.cache == null)
-			{
-				this.cachePath = cacheFilePath;
-				this.cache = await CacheFile.ReadFrom(cacheFilePath);
-			}
-			else if (this.cachePath != cacheFilePath)
-				throw new ArgumentException("this.cachePath != cacheFilePath");
 
-			this.cache.entries[hash] = new CacheFile.CacheEntry() { Hash = hash, Rectangles = rectangles };
-			await this.cache.WriteTo(cacheFilePath);
+			if (!Directory.Exists(cachePath))
+				Directory.CreateDirectory(cachePath);
+
+			string path = Path.Combine(cachePath, hash);
+			return File.WriteAllLinesAsync(path, new CacheFile.CacheEntry() { Hash = hash, Rectangles = rectangles }.Lines);
 		}
 
-		public static async Task<nint> ComputeHash(string? file, string? dir)
+		public static async Task<nuint> ComputeHash(string? file, string? dir)
 		{
 			if (dir != null)
 				dir = Path.GetFullPath(dir);
@@ -66,9 +54,12 @@ namespace JBSnorro.Web
 			var hashCodeTasks = allRelevantFilenames.Zip(subfilenames, (fullpath, subpath) => Task.Run(() => fullpath.ComputeFileHash() + subpath.ComputeHash()));
 			var hashCodes = await Task.WhenAll(hashCodeTasks);
 
-			var sum = hashCodes.Sum();
-			var versionHash = layoutEngineVersionHash;
-			return sum + versionHash;
+			unchecked
+			{
+				var sum = hashCodes.Sum();
+				var versionHash = (nuint)layoutEngineVersionHash;
+				return sum + versionHash;
+			}
 		}
 	}
 
@@ -119,6 +110,17 @@ namespace JBSnorro.Web
 			public string Hash { get; internal init; } = default!;
 			public string[] Output { get; internal init; } = default!;
 
+			internal static CacheEntry Parse(string[] lines)
+			{
+				if (lines.Length <= 1) throw new ArgumentException();
+				if (!lines[0].StartsWith(newEntryPrefix)) throw new ArgumentException();
+
+				return new CacheEntry
+				{
+					Hash = lines[0][newEntryPrefix.Length..],
+					Output = lines[1..]
+				};
+			}
 
 
 			public IEnumerable<RectangleF> Rectangles
