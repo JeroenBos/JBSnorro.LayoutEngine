@@ -37,8 +37,7 @@ namespace JBSnorro.Web
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
 
-			if (!Directory.Exists(cachePath))
-				Directory.CreateDirectory(cachePath);
+			Directory.CreateDirectory(cachePath);
 
 			string path = Path.Combine(cachePath, hash);
 			return File.WriteAllLinesAsync(path, new CacheFile.CacheEntry() { Hash = hash, Rectangles = rectangles }.Lines);
