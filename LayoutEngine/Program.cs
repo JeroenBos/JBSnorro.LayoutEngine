@@ -14,6 +14,7 @@ using System.Text;
 using System.Globalization;
 using System.Drawing;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace JBSnorro.Web
 {
@@ -39,18 +40,28 @@ namespace JBSnorro.Web
 				description: "The html file to process.",
 				getDefaultValue: () => null
 			),
+			new Option<bool>(
+				alias: "--no-cache",
+				description: "If specified, the cache will not be read nor written to.",
+				getDefaultValue: () => false
+			),
+			new Option<string?>(
+				alias: "--cache-file",
+				description: "The path to a file with cached results. ",
+				getDefaultValue: () => ".layoutenginecache"
+			),
 			};
 
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
 			{
-				Handler = CommandHandler.Create<string?, string?, CancellationToken>(main),
+				Handler = CommandHandler.Create<string?, string?, bool, string, CancellationToken>(main),
 				Name = "layoutmeasurer",
 			}.With(arguments).InvokeAsync(args);
 
 
 
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
-			void main(string? dir, string? file, CancellationToken cancellationToken)
+			async Task main(string? dir, string? file, bool no_cache, string cacheFile, CancellationToken cancellationToken)
 			{
 				// for these weird lines, see https://github.com/dotnet/command-line-api/issues/1360#issuecomment-886983870
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
@@ -66,10 +77,19 @@ namespace JBSnorro.Web
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
-				cancellationToken.ThrowIfCancellationRequested();
+				var cache = no_cache ? null : new Cache();
+				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir, cacheFile);
+				if (rectangles == null)
+				{
+					using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
+					cancellationToken.ThrowIfCancellationRequested();
 
-				var rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
+					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
+					if (cache != null)
+					{
+						await cache.Write(file, dir, hash!, rectangles, cacheFile);
+					}
+				}
 				cancellationToken.ThrowIfCancellationRequested();
 
 				Console.WriteLine("########## RECTANGLES INCOMING ##########");
