@@ -40,7 +40,7 @@ namespace JBSnorro.Web
 			}
 			return (null, hash);
 		}
-		public async Task AppendAndFlush(string? file, string? dir, string hash, IEnumerable<RectangleF> rectangles, string cacheFilePath)
+		public async Task Write(string? file, string? dir, string hash, IEnumerable<RectangleF> rectangles, string cacheFilePath)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
@@ -68,7 +68,7 @@ namespace JBSnorro.Web
 
 			var sum = hashCodes.Sum();
 			var versionHash = layoutEngineVersionHash;
-			return (nint)sum + versionHash;
+			return sum + versionHash;
 		}
 	}
 
@@ -79,7 +79,7 @@ namespace JBSnorro.Web
 		public static async Task<CacheFile> ReadFrom(string path)
 		{
 			var lines = File.Exists(path) ? (await File.ReadAllLinesAsync(path)).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray() : Array.Empty<string>();
-			return new CacheFile(CacheEntry.Parse(lines).Select(entry => KeyValuePair.Create(entry.Hash, entry)));
+			return new CacheFile(Parse(lines).Select(entry => KeyValuePair.Create(entry.Hash, entry)));
 		}
 
 		public CacheFile(IEnumerable<KeyValuePair<string, CacheEntry>> entries)
@@ -95,29 +95,31 @@ namespace JBSnorro.Web
 			return File.WriteAllLinesAsync(path, lines);
 		}
 
+		internal static IEnumerable<CacheEntry> Parse(string[] lines)
+		{
+			for (int index = 0; index < lines.Length; index++)
+			{
+				string line = lines[index];
+				if (line.StartsWith(newEntryPrefix))
+				{
+					int endIndex = index + 1 + lines.Skip(index + 1).IndexOf(l => l.StartsWith(newEntryPrefix));
+					if (endIndex == index) // i.e. IndexOf returned -1
+						endIndex = lines.Length;
+					yield return new CacheEntry
+					{
+						Hash = line[newEntryPrefix.Length..],
+						Output = lines[(index + 1)..endIndex]
+					};
+				}
+			}
+		}
+
 		public record CacheEntry
 		{
 			public string Hash { get; internal init; } = default!;
 			public string[] Output { get; internal init; } = default!;
 
-			internal static IEnumerable<CacheEntry> Parse(string[] lines)
-			{
-				for (int index = 0; index < lines.Length; index++)
-				{
-					string line = lines[index];
-					if (line.StartsWith(newEntryPrefix))
-					{
-						int endIndex = index + 1 + lines.Skip(index + 1).IndexOf(l => l.StartsWith(newEntryPrefix));
-						if (endIndex == index) // i.e. IndexOf returned -1
-							endIndex = lines.Length;
-						yield return new CacheEntry
-						{
-							Hash = line[newEntryPrefix.Length..],
-							Output = lines[(index + 1)..endIndex]
-						};
-					}
-				}
-			}
+
 
 			public IEnumerable<RectangleF> Rectangles
 			{

@@ -87,7 +87,7 @@ namespace JBSnorro.Web
 					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
 					if (cache != null)
 					{
-						await cache.AppendAndFlush(file, dir, hash!, rectangles, cacheFile);
+						await cache.Write(file, dir, hash!, rectangles, cacheFile);
 					}
 				}
 				cancellationToken.ThrowIfCancellationRequested();
