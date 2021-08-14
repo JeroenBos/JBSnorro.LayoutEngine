@@ -92,7 +92,7 @@ namespace JBSnorro.Web
 				}
 				cancellationToken.ThrowIfCancellationRequested();
 
-				Console.WriteLine("########## RECTANGLES INCOMING ##########");
+				Console.WriteLine("########## RECTANGLES INCOMING (V1) ##########");
 				foreach (var rectangle in rectangles)
 				{
 					Console.WriteLine(rectangle.Format());
