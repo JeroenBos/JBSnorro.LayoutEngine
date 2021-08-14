@@ -54,6 +54,7 @@ namespace JBSnorro.Web
 			}
 			return false;
 		}
+		public override int GetHashCode() => throw new NotImplementedException();
 		public override string ToString() => Format();
 	}
 }
