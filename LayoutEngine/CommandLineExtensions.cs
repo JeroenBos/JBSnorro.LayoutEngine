@@ -26,7 +26,8 @@ namespace System.CommandLine
 		public static Option<T> With<T>(this Option<T> option,
 										Maybe<string> description = default,
 										Maybe<T> defaultValue = default,
-										Maybe<bool> required = default)
+										Maybe<bool> required = default,
+										Maybe<IArgumentArity> arity = default)
 		{
 			if (description.HasValue)
 				option.Description = description.Value;
@@ -34,6 +35,22 @@ namespace System.CommandLine
 				option.SetDefaultValue(defaultValue.Value);
 			if (required.HasValue)
 				option.IsRequired = required.Value;
+			if (arity.HasValue)
+				option.Arity = arity.Value;
+
+			return option;
+		}
+		public static Option With(this Option option,
+								  Maybe<string> description = default,
+								  Maybe<bool> required = default,
+								  Maybe<IArgumentArity> arity = default)
+		{
+			if (description.HasValue)
+				option.Description = description.Value;
+			if (required.HasValue)
+				option.IsRequired = required.Value;
+			if (arity.HasValue)
+				option.Arity = arity.Value;
 
 			return option;
 		}

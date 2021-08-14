@@ -24,7 +24,7 @@ public class CommandLineTests
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--dir", "." });
+			await Program.Main(new string[] { "--no-cache", "--dir", "." });
 		}
 
 		#region CI debugging statements
@@ -38,7 +38,7 @@ public class CommandLineTests
 		#endregion
 
 		Assert.AreEqual("", output.StdErr);
-		string expected = @"########## RECTANGLES INCOMING ##########
+		string expected = @"########## RECTANGLES INCOMING (V1) ##########
 HTML,0,0,800,600
 BODY,0,0,800,600
 DIV,0,0,800,0
@@ -56,7 +56,7 @@ STYLE,0,0,0,0
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--file", "OneElementWithSizes.html" });
+			await Program.Main(new string[] { "--no-cache", "--file", "OneElementWithSizes.html" });
 		}
 
 		#region CI debugging statements
@@ -71,11 +71,11 @@ STYLE,0,0,0,0
 
 
 		Assert.AreEqual("", output.StdErr);
-		string expected = @"########## RECTANGLES INCOMING ##########
-0,0,800,316.5
-8,8,784,300.5
-8,8,400.29688,300.5
-0,0,0,0
+		string expected = @"########## RECTANGLES INCOMING (V1) ##########
+HTML,0,0,800,316.5
+BODY,8,8,784,300.5
+DIV,8,8,400.29688,300.5
+HEAD,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
 		Assert.AreEqual(expected, stdOut);
