@@ -44,12 +44,12 @@ namespace JBSnorro.Web
 				alias: "--no-cache",
 				description: "If specified, the cache will not be read nor written to.",
 				getDefaultValue: () => false
-			),
+			).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
 			new Option<string?>(
-				alias: "--cache-file",
+				alias: "--cache-path",
 				description: "The path to a file with cached results. ",
-				getDefaultValue: () => ".layoutenginecache"
-			),
+				getDefaultValue: () => ".layoutenginecache/"
+				)
 			};
 
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
@@ -61,7 +61,7 @@ namespace JBSnorro.Web
 
 
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
-			async Task main(string? dir, string? file, bool no_cache, string cacheFile, CancellationToken cancellationToken)
+			async Task main(string? dir, string? file, bool noCache, string cachePath, CancellationToken cancellationToken)
 			{
 				// for these weird lines, see https://github.com/dotnet/command-line-api/issues/1360#issuecomment-886983870
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
@@ -77,8 +77,8 @@ namespace JBSnorro.Web
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				var cache = no_cache ? null : new Cache();
-				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir, cacheFile);
+				var cache = noCache ? null : new Cache();
+				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir, cachePath);
 				if (rectangles == null)
 				{
 					using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
@@ -87,7 +87,7 @@ namespace JBSnorro.Web
 					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
 					if (cache != null)
 					{
-						await cache.Write(file, dir, hash!, rectangles, cacheFile);
+						await cache.Write(file, dir, hash!, rectangles, cachePath);
 					}
 				}
 				cancellationToken.ThrowIfCancellationRequested();

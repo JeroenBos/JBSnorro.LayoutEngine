@@ -24,7 +24,7 @@ public class CommandLineTests
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--dir", "." });
+			await Program.Main(new string[] { "--no-cache", "--dir", "." });
 		}
 
 		#region CI debugging statements
@@ -56,7 +56,7 @@ public class CommandLineTests
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--file", "OneElementWithSizes.html" });
+			await Program.Main(new string[] { "--no-cache", "--file", "OneElementWithSizes.html" });
 		}
 
 		#region CI debugging statements
