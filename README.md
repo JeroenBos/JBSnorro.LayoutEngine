@@ -15,7 +15,7 @@ layoutengine.exe --dir "C:\\path\\to\\dir\\containing\\an\\index.html"
 
 The `--dir` argument need not be absolute, `--file` must be though. At least one of each must be provided.
 
-A rectangle is printed in the format `<x>,<y>,<width>,<height>\n` where each number is a float printed with `.` as decimal point, if required.
+A rectangle is printed in the format `<tagname>,<x>,<y>,<width>,<height>\n` where each number is a float printed with `.` as decimal point, if required.
 The rectangles are sorted by xpath, and printed after the line `########## RECTANGLES INCOMING (V1) ##########`. Before that, Selenium output is printed, which I failed to redirect.
 Skipping until that line can be achieved for example like
 ```bash
