@@ -32,6 +32,8 @@ jobs:
         include-prerelease: true
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }}
+    - name: chmod artifact executable
+      run: "[ ${{ matrix.runtime }} = linux_x64 ] && chmod 755 LayoutEngine/publish/LayoutEngine"
     - name: build test
       run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }}
     - name: test
