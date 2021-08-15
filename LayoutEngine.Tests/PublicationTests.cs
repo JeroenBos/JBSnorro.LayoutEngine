@@ -13,9 +13,23 @@ using System.Threading.Tasks;
 public class PublicationTests
 {
 	public static string CurrentPath => Directory.GetCurrentDirectory();
+	public static string RepositoryRoot
+	{
+		get
+		{
+			for (DirectoryInfo? directory = new DirectoryInfo(CurrentPath);
+				 directory != null;
+				 directory = directory.Parent)
+			{
+				if (File.Exists(Path.Combine(directory.FullName, "LayoutEngine.sln")))
+					return directory.FullName;
+			}
+			throw new FileNotFoundException("LayoutEngine.sln");
+		}
+	}
 	private static string ArtifactPath
 	{
-		get => "../../../../LayoutEngine/publish/" + ArtifactFileName;
+		get => Path.Combine(RepositoryRoot, "LayoutEngine", "publish", ArtifactFileName);
 	}
 	private static string ArtifactFileName
 	{
