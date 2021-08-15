@@ -36,7 +36,7 @@ public class PublicationTests
 		get => OperatingSystem.IsWindows() ? "LayoutEngine.exe" : "LayoutEngine";
 	}
 
-	[TestOnWindowsOnly]
+	[Test]
 	public async Task Test_That_The_Extracted_Driver_Is_Resolved()
 	{
 		var executablePath = Path.Combine(JBSnorro.Extensions.CreateTemporaryDirectory(), ArtifactFileName);
