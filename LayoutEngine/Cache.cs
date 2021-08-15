@@ -39,7 +39,16 @@ namespace JBSnorro.Web
 			Directory.CreateDirectory(cachePath);
 
 			string path = Path.Combine(cachePath, hash);
-			return File.WriteAllLinesAsync(path, new CacheFile.CacheEntry() { Hash = hash, Rectangles = rectangles }.Lines);
+			try
+			{
+				return File.WriteAllLinesAsync(path, new CacheFile.CacheEntry() { Hash = hash, Rectangles = rectangles }.Lines);
+			}
+			catch (IOException e)
+			{
+				Console.Error.WriteLine("Ignoring error in writing cache");
+				Console.Error.WriteLine(e.GetType().Name + ": " + e.Message);
+				return Task.CompletedTask;
+			}
 		}
 
 		public static async Task<nuint> ComputeHash(string? file, string? dir)
@@ -74,14 +83,6 @@ namespace JBSnorro.Web
 		public CacheFile(IEnumerable<KeyValuePair<string, CacheEntry>> entries)
 		{
 			this.entries = new Dictionary<string, CacheEntry>(entries);
-		}
-
-		public Task WriteTo(string path)
-		{
-			// using var file = File.OpenWrite(path);
-
-			var lines = entries.SelectMany(entry => entry.Value.Lines);
-			return File.WriteAllLinesAsync(path, lines);
 		}
 
 		internal static IEnumerable<CacheEntry> Parse(string[] lines)
