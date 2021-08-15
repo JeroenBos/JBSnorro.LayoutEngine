@@ -35,7 +35,7 @@ jobs:
     - name: chmod artifact executable
       run: |
           if [ ${{ matrix.runtime }} = linux_x64 ]; then
-               sudo chmod 755 './LayoutEngine/publish/LayoutEngine'
+              sudo chmod 755 './LayoutEngine/publish/LayoutEngine'
           fi
     - name: build test
       run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }}
