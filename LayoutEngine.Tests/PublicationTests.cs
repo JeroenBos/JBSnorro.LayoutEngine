@@ -44,7 +44,11 @@ public class PublicationTests
 		Assert.IsTrue(File.Exists(executablePath), "File doesn't exist");
 
 		var htmlPathArg = Path.GetFullPath(Path.Combine(CurrentPath, "Index.html")).WrapInDoubleQuotes();
-		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(executablePath, "--file", htmlPathArg);
+		var process = new ProcessStartInfo("./LayoutEngine.exe", string.Join(" ", "--file", htmlPathArg))
+		{
+			WorkingDirectory = Path.GetDirectoryName(executablePath),
+		};
+		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(process);
 
 		Assert.AreEqual(result.ExitCode, 0);
 		Assert.IsTrue(result.StandardOutput.EndsWith("STYLE,0,0,0,0\n"));
