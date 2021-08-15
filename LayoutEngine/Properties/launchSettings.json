@@ -2,7 +2,7 @@
   "profiles": {
     "LayoutEngine": {
       "commandName": "Project",
-      "commandLineArgs": "--file ..\\..\\..\\..\\..\\LayoutEngine.Tests\\Bodyless.html"
+      "commandLineArgs": "--no-cache --file ..\\..\\..\\..\\..\\LayoutEngine.Tests\\Bodyless.html"
     }
   }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JBSnorro
@@ -162,5 +164,88 @@ namespace JBSnorro
 				result += summand;
 			return result;
 		}
+		/// <summary>
+		/// Returns the string enclosed by double quotes on each side.
+		/// </summary>
+		public static string WrapInDoubleQuotes(this string s)
+		{
+			return s.WrapIn("\"");
+		}
+		/// <summary>
+		/// Returns the string enclosed by <paramref name="enclosing"/> on each side.
+		/// </summary>
+		public static string WrapIn(this string s, string enclosing)
+		{
+			return enclosing + s + enclosing;
+		}
 	}
+
+	public static class ProcessExtensions
+	{
+		public static Task<ProcessOutput> WaitForExitAndReadOutputAsync(string executable, params string[] arguments)
+		{
+			return WaitForExitAndReadOutputAsync(executable, cancellationToken: default, arguments: arguments);
+		}
+		public static Task<ProcessOutput> WaitForExitAndReadOutputAsync(string executable, CancellationToken cancellationToken, params string[] arguments)
+		{
+			var process = new ProcessStartInfo(executable, string.Join(" ", arguments))
+			{
+				WorkingDirectory = Path.GetDirectoryName(executable),
+			};
+			return process.WaitForExitAndReadOutputAsync(cancellationToken);
+		}
+		public static async Task<ProcessOutput> WaitForExitAndReadOutputAsync(this ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var process = Process.Start(startInfo.WithOutput())!;
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			await process.WaitForExitAsync(cancellationToken);
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			string output = process.StandardOutput.ReadToEnd();
+			string errorOutput = process.StandardError.ReadToEnd();
+			return new ProcessOutput { ExitCode = process.ExitCode, StandardOutput = output, ErrorOutput = errorOutput };
+		}
+		public static ProcessStartInfo WithHidden(this ProcessStartInfo startInfo)
+		{
+			startInfo.CreateNoWindow = true;
+			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			return startInfo;
+		}
+
+		public static ProcessStartInfo WithOutput(this ProcessStartInfo startInfo)
+		{
+			startInfo.UseShellExecute = false;
+			startInfo.RedirectStandardOutput = true;
+			startInfo.RedirectStandardError = true;
+			return startInfo;
+		}
+	}
+
+	public record ProcessOutput
+	{
+		public int ExitCode { get; init; }
+		public string StandardOutput { get; init; } = default!;
+		public string ErrorOutput { get; init; } = default!;
+
+		public void Deconstruct(out int exitCode, out string standardOutput, out string errorOutput)
+		{
+			exitCode = ExitCode;
+			standardOutput = StandardOutput;
+			errorOutput = ErrorOutput;
+		}
+		public static implicit operator ProcessOutput((int ExitCode, string StandardOutput, string StandardError) tuple)
+		{
+			return new ProcessOutput()
+			{
+				ExitCode = tuple.ExitCode,
+				StandardOutput = tuple.StandardOutput,
+				ErrorOutput = tuple.StandardError,
+			};
+		}
+	}
+
 }
