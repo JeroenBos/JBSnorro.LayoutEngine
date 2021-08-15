@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="Help">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -6,14 +6,19 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<Configurations>Debug;Release;CI</Configurations>
-	</PropertyGroup>
-	
-	<PropertyGroup>
+
 		<DefineConstants Condition="'$(Configuration)' == 'CI'">$(DefineConstants);CI</DefineConstants>
 		<DefineConstants Condition="'$(RuntimeIdentifier)' == 'win10-x64'">$(DefineConstants);WINDOWS</DefineConstants>
 		<DefineConstants Condition="'$(RuntimeIdentifier)' == 'linux-x64'">$(DefineConstants);LINUX</DefineConstants>
 	</PropertyGroup>
 
+	<Target Name="Help">
+		<Message Text="RuntimeIdentifier:" Importance="high"  />
+		<Message Text="$(RuntimeIdentifier)" Importance="high"  />
+		<Message Text="RuntimeIdentifiers:" Importance="high"  />
+		<Message Text="$(RuntimeIdentifiers)" Importance="high" />
+	</Target>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\LayoutEngine\LayoutEngine.csproj" />
 
