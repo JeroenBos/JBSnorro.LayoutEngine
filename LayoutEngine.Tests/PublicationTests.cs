@@ -41,6 +41,7 @@ public class PublicationTests
 	{
 		var executablePath = Path.Combine(JBSnorro.Extensions.CreateTemporaryDirectory(), ArtifactFileName);
 		File.Copy(ArtifactPath, executablePath, overwrite: true);
+		Assert.IsTrue(File.Exists(executablePath), "File doesn't exist");
 
 		var htmlPathArg = Path.GetFullPath(Path.Combine(CurrentPath, "Index.html")).WrapInDoubleQuotes();
 		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(executablePath, "--file", htmlPathArg);
