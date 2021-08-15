@@ -6,10 +6,13 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<Configurations>Debug;Release;CI</Configurations>
+		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='CI'">
-		<DefineConstants>TRACE;CI</DefineConstants>
+	
+	<PropertyGroup>
+		<DefineConstants Condition="'$(Configuration)' == 'CI'">$(DefineConstants);CI</DefineConstants>
+		<DefineConstants Condition="'$(RuntimeIdentifier)' == 'win10-x64'">$(DefineConstants);WINDOWS</DefineConstants>
+		<DefineConstants Condition="'$(RuntimeIdentifier)' == 'linux-x64'">$(DefineConstants);LINUX</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

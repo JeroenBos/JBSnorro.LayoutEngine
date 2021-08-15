@@ -48,15 +48,23 @@ namespace JBSnorro.Web
 			if (!File.Exists(fullPath))
 				throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
 
+			var service = CreateDriverService(); // call before creating ChromeOptions due to its static ctor crashing otherwise
 			var options = new ChromeOptions();
 			options.AddArgument("--headless");
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
 
-			var driver = new ChromeDriver(options);
+			var driver = new ChromeDriver(service, options);
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
 			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 			return driver;
+		}
+		private static ChromeDriverService CreateDriverService()
+		{
+			// The default services searches in the directory of the executing binary, and PATH.
+			// But, the published artifact is extracted somewhere and run there, which is where Selenium searches
+			// Here we specify to find it next to the artifact instead
+			return ChromeDriverService.CreateDefaultService(Directory.GetCurrentDirectory());
 		}
 		/// <summary>
 		/// Gets all the bounding client rectangles of the html elements in the specified driver by element xpath.

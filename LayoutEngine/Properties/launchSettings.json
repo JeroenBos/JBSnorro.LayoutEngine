@@ -1,8 +1,8 @@
 {
-  "profiles": {
-    "LayoutEngine": {
-      "commandName": "Project",
-      "commandLineArgs": "--file ..\\..\\..\\..\\..\\LayoutEngine.Tests\\Bodyless.html"
-    }
-  }
+	"profiles": {
+		"LayoutEngine": {
+			"commandName": "Project",
+			"commandLineArgs": "--no-cache --file ..\\..\\..\\..\\..\\LayoutEngine.Tests\\Bodyless.html"
+		}
+	}
 }
