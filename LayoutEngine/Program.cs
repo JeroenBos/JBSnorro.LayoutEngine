@@ -14,6 +14,7 @@ using System.Text;
 using System.Globalization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace JBSnorro.Web
 {
@@ -24,6 +25,7 @@ namespace JBSnorro.Web
 			Console.Out.NewLine = "\n";
 			Console.Error.NewLine = "\n";
 			EnsureDriverExtracted();
+			Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
 
 			// the CLI arguments and options
 			var arguments = new Symbol[]
