@@ -24,8 +24,6 @@ namespace JBSnorro.Web
 		{
 			Console.Out.NewLine = "\n";
 			Console.Error.NewLine = "\n";
-			EnsureDriverExtracted();
-			Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
 
 			// the CLI arguments and options
 			var arguments = new Symbol[]
@@ -64,6 +62,9 @@ namespace JBSnorro.Web
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
 			async Task main(string? dir, string? file, bool noCache, string cachePath, CancellationToken cancellationToken)
 			{
+				EnsureDriverExtracted();
+				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
+
 				// for these weird lines, see https://github.com/dotnet/command-line-api/issues/1360#issuecomment-886983870
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
 				if (dir == "") dir = null;
