@@ -12,15 +12,8 @@ public class CommandLineTests
 {
 	private static string SkipCIConnectionFailedLines(string output)
 	{
-		string[] lines = output.Split('\n');
-		int firstNonErrorLineIndex = lines.IndexOf(line => !line.StartsWith("Connection refused [::ffff:127.0.0.1]:"));
-		if (firstNonErrorLineIndex == -1)
-			firstNonErrorLineIndex = 0;
-
-		// skip version number line
-		if (lines[firstNonErrorLineIndex].StartsWith("LayoutEngine version"))
-			firstNonErrorLineIndex++;
-		return string.Join('\n', lines.Skip(firstNonErrorLineIndex));
+		// Skips lines starting with `Connection refused [::ffff:127.0.0.1]:` or `LayoutEngine version`
+		return string.Join('\n', output.Split('\n').SkipWhile(s => !s.StartsWith("######")));
 	}
 	[Test]
 	public async Task Open_Index()
