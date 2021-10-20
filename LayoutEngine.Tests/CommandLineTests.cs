@@ -52,6 +52,12 @@ META,0,0,0,0
 STYLE,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+		if (expected != stdOut)
+        {
+			Console.WriteLine("output.stdOut");
+			Console.WriteLine(stdOut);
+			Console.WriteLine(stdOut.StartsWith("Connection refused [::ffff:127.0.0.1]:"));
+		}
 		Assert.AreEqual(expected, stdOut);
 	}
 	[Test]
@@ -82,6 +88,12 @@ DIV,8,8,400.29688,300.5
 HEAD,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+		if (expected != stdOut)
+		{
+			Console.WriteLine("output.stdOut");
+			Console.WriteLine(stdOut);
+			Console.WriteLine(stdOut.StartsWith("Connection refused [::ffff:127.0.0.1]:"));
+		}
 		Assert.AreEqual(expected, stdOut);
 	}
 }
