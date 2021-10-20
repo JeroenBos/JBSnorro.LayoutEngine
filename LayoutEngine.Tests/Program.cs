@@ -1,0 +1,1 @@
+﻿await new PublicationTests().Test_That_The_Extracted_Driver_Is_Resolved();
