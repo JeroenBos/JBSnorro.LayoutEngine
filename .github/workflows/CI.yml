@@ -38,5 +38,5 @@ jobs:
     - name: build test
       run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: test
-      run: dotnet test --configuration CI --runtime ${{ matrix.runtime }} --self-contained
+      run: dotnet test --configuration CI --runtime ${{ matrix.runtime }}
       timeout-minutes: 5
