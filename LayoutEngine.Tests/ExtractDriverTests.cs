@@ -11,12 +11,12 @@ using NUnit.Framework;
 public class ExtractDriverTests
 {
 	[Test]
-	public void Test_Extract_Driver()
+	public async Task Test_Extract_Driver()
 	{
 		string extension = OperatingSystem.IsWindows() ? ".exe" : "";
 		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
 
-		Program.EnsureDriverExtracted(dir);
+		await Program.EnsureDriverExtracted(dir);
 		string path = Path.Combine(dir, $"chromedriver{extension}");
 		Assert.IsTrue(File.Exists(path));
 

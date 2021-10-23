@@ -62,7 +62,7 @@ namespace JBSnorro.Web
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
 			async Task main(string? dir, string? file, bool noCache, string cachePath, CancellationToken cancellationToken)
 			{
-				EnsureDriverExtracted();
+				await EnsureDriverExtracted();
 				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
 
 				// for these weird lines, see https://github.com/dotnet/command-line-api/issues/1360#issuecomment-886983870
@@ -101,13 +101,25 @@ namespace JBSnorro.Web
 				}
 			}
 		}
-		public static void EnsureDriverExtracted(string dir = "./")
+		public static async Task EnsureDriverExtracted(string dir = "./")
 		{
 			string filename = "chromedriver" + (OperatingSystem.IsWindows() ? ".exe" : "");
 			string path = Path.GetFullPath(Path.Combine(dir, filename));
 			if (!File.Exists(path))
 			{
 				File.WriteAllBytes(path, Resources.chromedriver);
+			}
+
+			if (!OperatingSystem.IsWindows())
+			{
+				string bash = $"chmod +xwr '{path}'";
+				var output = await ProcessExtensions.WaitForExitAndReadOutputAsync("bash", "-c", '"' + bash + '"');
+
+				if (output.ExitCode != 0)
+				{
+					Console.WriteLine($"Error ({output.ExitCode}) in settings executable bit on chromedriver");
+					Console.WriteLine(output.ErrorOutput);
+				}
 			}
 		}
 	}

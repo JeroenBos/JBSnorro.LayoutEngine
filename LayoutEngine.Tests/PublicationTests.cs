@@ -62,7 +62,7 @@ public class PublicationTests
 	{	
 		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
 
-		Program.EnsureDriverExtracted(dir);
+		await Program.EnsureDriverExtracted(dir);
 		string path = Path.Combine(dir, $"chromedriver");
 		Assert.IsTrue(File.Exists(path));
 
