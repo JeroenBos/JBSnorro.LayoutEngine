@@ -44,7 +44,7 @@ public class PublicationTests
 		Assert.IsTrue(File.Exists(executablePath), "File doesn't exist");
 
 		var htmlPathArg = Path.GetFullPath(Path.Combine(CurrentPath, "Index.html")).WrapInDoubleQuotes();
-		var process = new ProcessStartInfo("./LayoutEngine.exe", string.Join(" ", "--file", htmlPathArg))
+		var process = new ProcessStartInfo("./" + ArtifactFileName, string.Join(" ", "--file", htmlPathArg))
 		{
 			WorkingDirectory = Path.GetDirectoryName(executablePath),
 		};
