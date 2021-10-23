@@ -23,7 +23,7 @@
 		<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
 		<PackageReference Include="coverlet.collector" Version="3.0.3" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="92.0.4515.10700" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="94.0.4606.6100" />
 	</ItemGroup>
 
 	<ItemGroup>
