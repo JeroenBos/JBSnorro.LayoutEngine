@@ -33,7 +33,7 @@ jobs:
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
-      if: ${{ matrix.runtime == 'linux_x64' }} 
+      if: ${{ matrix.runtime == 'linux-x64' }} 
       run: sudo chmod +xwr './LayoutEngine/publish/LayoutEngine'
     - name: build test
       run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }}
