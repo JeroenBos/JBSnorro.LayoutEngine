@@ -44,13 +44,13 @@ public class PublicationTests
 		Assert.IsTrue(File.Exists(executablePath), "File doesn't exist");
 
 		var htmlPathArg = Path.GetFullPath(Path.Combine(CurrentPath, "Index.html")).WrapInDoubleQuotes();
-		var process = new ProcessStartInfo("./" + ArtifactFileName, string.Join(" ", "--file", htmlPathArg))
+		var process = new ProcessStartInfo(executablePath, string.Join(" ", "--file", htmlPathArg))
 		{
 			WorkingDirectory = Path.GetDirectoryName(executablePath),
 		};
 		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(process);
 
-		Assert.AreEqual(result.ExitCode, 0);
+		Assert.AreEqual(0, result.ExitCode, result.ErrorOutput);
 		Assert.IsTrue(result.StandardOutput.EndsWith("STYLE,0,0,0,0\n"));
 	}
 }
