@@ -53,6 +53,7 @@ namespace JBSnorro.Web
 			options.AddArgument("--headless");
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
+			options.AddArgument("--disable-dev-shm-usage");
 
 			var driver = new ChromeDriver(service, options);
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
