@@ -18,9 +18,9 @@ class TestOnWindowsOnly
 }
 class TestOnLinuxOnly
 #if LINUX
-	: Attribute
-#else
 	: TestAttribute
+#else
+	: Attribute
 #endif
 {
 
