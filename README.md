@@ -32,3 +32,10 @@ Use this bash command instead:
 ```
 cd LayoutEngine; dotnet publish -c Release -r linux-x64 -o publish
 ```
+
+(or with runtime `win10-x64` from linux also seems to work)
+
+When testing from Linux, please run this instead:
+```
+dotnet test --configuration CI --runtime linux-x64
+```
