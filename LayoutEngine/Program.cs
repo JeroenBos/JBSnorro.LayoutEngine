@@ -15,6 +15,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace JBSnorro.Web
 {
@@ -48,22 +49,31 @@ namespace JBSnorro.Web
 				alias: "--cache-path",
 				description: "The path to a file with cached results. ",
 				getDefaultValue: () => ".layoutenginecache/"
-				)
+			),
+			new Option<bool>(
+				alias: "--only-extract-chromedriver",
+				description: "If specified, nothing will happen except for extracting the chrome driver.",
+				getDefaultValue: () => false
+			).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
 			};
 
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
 			{
-				Handler = CommandHandler.Create<string?, string?, bool, string, CancellationToken>(main),
+				Handler = CommandHandler.Create<string?, string?, bool, string, bool, CancellationToken>(main),
 				Name = "layoutmeasurer",
 			}.With(arguments).InvokeAsync(args);
 
 
 
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
-			async Task main(string? dir, string? file, bool noCache, string cachePath, CancellationToken cancellationToken)
+			async Task main(string? dir, string? file, bool noCache, string cachePath, bool onlyExtractChromedriver, CancellationToken cancellationToken)
 			{
-				EnsureDriverExtracted();
+				var chromedriverVersion = await EnsureDriverExtracted();
 				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
+				Console.Out.WriteLine($"chromedriverVersion: {chromedriverVersion}");
+
+				if (onlyExtractChromedriver)
+					return;
 
 				// for these weird lines, see https://github.com/dotnet/command-line-api/issues/1360#issuecomment-886983870
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
@@ -101,14 +111,80 @@ namespace JBSnorro.Web
 				}
 			}
 		}
-		public static void EnsureDriverExtracted(string dir = "./")
+		public static Task<string> EnsureDriverExtracted(string dir = "./")
 		{
-			string filename = "chromedriver" + (OperatingSystem.IsWindows() ? ".exe" : "");
+			return EnsureDriverExtracted(dir: dir, extension: OperatingSystem.IsWindows() ? ".exe" : "");
+		}
+		internal static async Task<string> EnsureDriverExtracted(string extension, string dir = "./")
+		{
+			string filename = "chromedriver" + extension;
 			string path = Path.GetFullPath(Path.Combine(dir, filename));
+			Task<string?> versionTask;
 			if (!File.Exists(path))
 			{
-				File.WriteAllBytes(path, Resources.chromedriver);
+				await File.WriteAllBytesAsync(path, Resources.chromedriver);
+				versionTask = GetChromeVersion(path);
 			}
+			else
+			{
+				// overwrite if outdated version:
+				string? oldVersion = await GetChromeVersion(path, silent: true);
+				if (oldVersion?.StartsWith("95.") ?? false)
+				{
+					versionTask = Task.FromResult<string?>(oldVersion);
+				}
+				else
+				{
+					await File.WriteAllBytesAsync(path, Resources.chromedriver);
+					versionTask = GetChromeVersion(path);
+				}
+			}
+
+			// set executable bit
+			if (!OperatingSystem.IsWindows())
+			{
+				string bash = $"chmod +xwr '{path}'";
+				var output = await ProcessExtensions.WaitForExitAndReadOutputAsync("bash", "-c", '"' + bash + '"');
+
+				if (output.ExitCode != 0)
+				{
+					Console.WriteLine($"Error ({output.ExitCode}) in settings executable bit on chromedriver");
+					Console.WriteLine(output.ErrorOutput);
+				}
+			}
+
+			string? version = await versionTask;
+			if (version == null || !version.StartsWith("95."))
+			{
+				Console.WriteLine($"Internal error: invalid chromedriver version '{version ?? "null"}'");
+			}
+
+			return version ?? "?";
+		}
+		internal static async Task<string?> GetChromeVersion(string path, bool silent = false)
+		{
+			if (!File.Exists(path))
+				return "File does not exist";
+
+			var versionOutput = await ProcessExtensions.WaitForExitAndReadOutputAsync(path, "--version");
+			if (versionOutput.ExitCode != 0 || versionOutput.StandardOutput.Length == 0)
+			{
+				if (!silent)
+				{
+					Console.WriteLine("Error in getting chromedriver version");
+					Console.WriteLine(versionOutput.ErrorOutput);
+				}
+			}
+			else
+			{
+				string version = versionOutput.StandardOutput;
+				if (version[^1] == '\n' && version[..^1].All(c => c == '.' || char.IsDigit(c)))
+				{
+					version = version[..^1];
+					return version;
+				}
+			}
+			return null;
 		}
 	}
 }
