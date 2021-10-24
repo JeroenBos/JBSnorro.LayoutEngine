@@ -33,7 +33,7 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date)
       if: ${{ matrix.runtime == 'linux-x64' }} 
       run: |
-          sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add 
+          curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add 
           sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
           sudo apt -y update
           sudo apt -y install google-chrome-stable 
