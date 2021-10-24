@@ -29,4 +29,15 @@ public class ExtractDriverTests
 			Assert.AreEqual(expectedHashCode, path.ComputeFileHash());
 		}
 	}
+
+	public async Task HelperToExtractGuidFromDifferentOS()
+	{
+		const string extension = ".exe";
+		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
+		await Program.EnsureDriverExtracted(extension, dir: dir);
+
+		string path = Path.Combine(dir, "chromedriver" + extension);
+		Console.WriteLine(path.ComputeFileHash());
+
+	}
 }

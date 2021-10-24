@@ -101,9 +101,13 @@ namespace JBSnorro.Web
 				}
 			}
 		}
-		public static async Task EnsureDriverExtracted(string dir = "./")
+		public static Task EnsureDriverExtracted(string dir = "./")
 		{
-			string filename = "chromedriver" + (OperatingSystem.IsWindows() ? ".exe" : "");
+			return EnsureDriverExtracted(dir: dir, extension: OperatingSystem.IsWindows() ? ".exe" : "");
+		}
+		internal static async Task EnsureDriverExtracted(string extension, string dir = "./")
+		{
+			string filename = "chromedriver" + extension;
 			string path = Path.GetFullPath(Path.Combine(dir, filename));
 			if (!File.Exists(path))
 			{
