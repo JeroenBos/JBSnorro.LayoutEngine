@@ -22,7 +22,7 @@ public class ExtractDriverTests
 
 		unchecked
 		{
-			nuint expectedHashCode = OperatingSystem.IsWindows() ? (nuint)13943427872559576225 : (nuint)1290074335871784207;
+			nuint expectedHashCode = OperatingSystem.IsWindows() ? (nuint)6311131775771370345 : (nuint)6311131775771370345;
 			// the following does not work in CI, because the path has 1 extra depth (the runtime identifier):
 			// int expectedHashCode = $"../../../../LayoutEngine/chromedriver{extension}".ComputeFileHashCode();
 
