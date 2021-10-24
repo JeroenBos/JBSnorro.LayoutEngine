@@ -30,6 +30,12 @@ jobs:
         # select a 'version' from an SDK from https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/6.0/releases.json
         dotnet-version: 6.0.100-rc.2.21505.57
         include-prerelease: true
+    - name: Ensure latest chrome version is installed (docker image can be out-of-date)
+      if: ${{ matrix.runtime == 'linux_x64' }} 
+      run: |
+          sudo apt -y update
+          sudo apt -y install google-chrome-stable 
+    
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
