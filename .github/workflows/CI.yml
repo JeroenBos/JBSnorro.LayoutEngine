@@ -40,7 +40,7 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
-          choco upgrade googlechrome -y --source="'http://internal/odata/repo'" --version=95.0.4638.54
+          choco upgrade googlechrome -y --version=95.0.4638.54
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
