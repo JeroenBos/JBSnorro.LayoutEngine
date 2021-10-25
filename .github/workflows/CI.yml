@@ -30,14 +30,18 @@ jobs:
         # select a 'version' from an SDK from https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/6.0/releases.json
         dotnet-version: 6.0.100-rc.2.21505.57
         include-prerelease: true
-    - name: Ensure latest chrome version is installed (docker image can be out-of-date)
+    - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Linux)
       if: ${{ matrix.runtime == 'linux-x64' }} 
       run: |
           sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add 
           sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
           sudo apt -y update
           sudo apt -y install google-chrome-stable 
-    
+    - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
+      if: ${{ matrix.runtime == 'win10-x64' }} 
+      uses: crazy-max/ghaction-chocolatey@v1
+      run: |
+          choco upgrade googlechrome -y --source="'http://internal/odata/repo'" --version=95.0.4638.54
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
