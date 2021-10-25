@@ -48,15 +48,22 @@ namespace JBSnorro.Web
 			if (!File.Exists(fullPath))
 				throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
 
-			var service = CreateDriverService(); // call before creating ChromeOptions due to its static ctor crashing otherwise
+			var driver = CreateDriver(); // don't dispose; it's returned
+			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
+			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
+			return driver;
+		}
+		private static ChromeDriver CreateDriver()
+		{
+			// create service before creating ChromeOptions due to its static ctor crashing otherwise. Don't dispose; is returned
+			var service = CreateDriverService();
 			var options = new ChromeOptions();
 			options.AddArgument("--headless");
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
 
 			var driver = new ChromeDriver(service, options);
-			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
-			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
+			driver.AssertBrowserAndDriverVersionsCompatible();
 			return driver;
 		}
 		private static ChromeDriverService CreateDriverService()
@@ -81,6 +88,60 @@ namespace JBSnorro.Web
 			return MeasureBoundingClientsRects(driver)
 					  .OrderBy(pair => pair.Key)
 					  .Select(pair => pair.Value);
+		}
+
+		public static void AssertBrowserAndDriverVersionsCompatible(this ChromeDriver driver)
+		{
+			string warningReason;
+
+
+			var browserVersion = driver.Capabilities.GetCapability("browserVersion") as string;
+			if (browserVersion != null)
+			{
+				var browser = driver.Capabilities.GetCapability("chrome") as Dictionary<string, object>;
+				if (browser != null)
+				{
+					if (browser.TryGetValue("chromedriverVersion", out object? driverVersionObj))
+					{
+						if (driverVersionObj is string { Length: >= 3 } driverVersion)
+						{
+							if (browserVersion == driverVersion[..browserVersion.Length])
+							{
+								return; // OK. versions are identical
+							}
+							if (browserVersion[..2] == driverVersion[..2])
+							{
+								Console.WriteLine($"Warning: browser minor version and driver minor version differ: {browserVersion} vs {driverVersion[..browserVersion.Length]}");
+								return; // OK, major versions are identical
+							}
+							else
+							{
+								string error = $"The browser and driver versions aren't compatible: {browserVersion} vs {driverVersion}";
+								Console.WriteLine(error);
+								throw new InvalidOperationException(error);
+							}
+						}
+						else
+						{
+							warningReason = "capability 'chrome.chromedriverVersion' is not a string";
+						}
+					}
+					else
+					{
+						warningReason = "capability 'chrome.chromedriverVersion' not found";
+					}
+				}
+				else
+				{
+					warningReason = "capability 'chrome' not found.";
+				}
+			}
+			else
+			{
+				warningReason = "capability 'browserVersion' not found.";
+			}
+
+			Console.WriteLine("Warning: browser version and driver version compatibility could not be determined: " + warningReason);
 		}
 	}
 }

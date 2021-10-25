@@ -210,7 +210,7 @@ namespace JBSnorro
 			return await task.WaitAsync(cts.Token);
 
 
-			async Task<ProcessOutput> impl(ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
+			async Task<ProcessOutput> impl(ProcessStartInfo startInfo, CancellationToken cancellationToken)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 				var process = Process.Start(startInfo.WithOutput())!;
