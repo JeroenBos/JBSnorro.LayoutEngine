@@ -7,6 +7,7 @@ using OpenQA.Selenium.Chrome;
 using System;
 using OpenQA.Selenium.Remote;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace JBSnorro.Web
 {
@@ -42,6 +43,7 @@ namespace JBSnorro.Web
 		/// <inheritdoc cref="IMeasurer{T}.Measure(IWebElement, RemoteWebDriver)"/>
 		/// <remarks> This method is implemented as extension method instead of instance method to allow for calling the base default interface method
 		/// and to ease the developer's life by allowing to call the default interface method without casting. </remarks>
+		[DebuggerHidden]
 		public static IReadOnlyDictionary<string, TaggedRectangle> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
 		{
 			return ((IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>)measurer).Measure(driver);
