@@ -30,5 +30,12 @@ When publishing, make sure the Configuration is set to Release, otherwise all ki
 Publishing the linux configuration doesn't work in the VS UI. 
 Use this bash command instead:
 ```
-dotnet publish -c Release -r linux-x64 -o publish
+cd LayoutEngine; dotnet publish -c Release -r linux-x64 -o publish
+```
+
+(or with runtime `win10-x64` from linux also seems to work)
+
+When testing from Linux, please run this instead:
+```
+dotnet test --configuration CI --runtime linux-x64
 ```

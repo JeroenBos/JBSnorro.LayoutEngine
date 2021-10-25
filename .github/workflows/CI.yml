@@ -27,16 +27,27 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        # select a 'version' from https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/6.0/releases.json
-        dotnet-version: 6.0.100-preview.6.21355.2
+        # select a 'version' from an SDK from https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/6.0/releases.json
+        dotnet-version: 6.0.100-rc.2.21505.57
         include-prerelease: true
+    - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Linux)
+      if: ${{ matrix.runtime == 'linux-x64' }} 
+      run: |
+          sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add 
+          sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
+          sudo apt -y update
+          sudo apt -y install google-chrome-stable 
+    - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
+      if: ${{ matrix.runtime == 'win10-x64' }} 
+      run: |
+          choco upgrade googlechrome -y --version=95.0.4638.54
     - name: build
-      run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }}
+      run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
-      if: ${{ matrix.runtime == 'linux_x64' }} 
-      run: sudo chmod 755 './LayoutEngine/publish/LayoutEngine'
+      if: ${{ matrix.runtime == 'linux-x64' }} 
+      run: sudo chmod +xwr './LayoutEngine/publish/LayoutEngine'
     - name: build test
-      run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }}
+      run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: test
       run: dotnet test --configuration CI --runtime ${{ matrix.runtime }}
       timeout-minutes: 5

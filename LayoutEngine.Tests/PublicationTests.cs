@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using JBSnorro;
+using JBSnorro.Web;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -36,16 +37,39 @@ public class PublicationTests
 		get => OperatingSystem.IsWindows() ? "LayoutEngine.exe" : "LayoutEngine";
 	}
 
-	[TestOnWindowsOnly]
+	[Test]
 	public async Task Test_That_The_Extracted_Driver_Is_Resolved()
 	{
 		var executablePath = Path.Combine(JBSnorro.Extensions.CreateTemporaryDirectory(), ArtifactFileName);
 		File.Copy(ArtifactPath, executablePath, overwrite: true);
+		Assert.IsTrue(File.Exists(executablePath), "File doesn't exist");
 
 		var htmlPathArg = Path.GetFullPath(Path.Combine(CurrentPath, "Index.html")).WrapInDoubleQuotes();
-		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(executablePath, "--file", htmlPathArg);
+		var process = new ProcessStartInfo(executablePath, string.Join(" ", "--file", htmlPathArg))
+		{
+			WorkingDirectory = Path.GetDirectoryName(executablePath),
+		};
+		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(process, timeout: 3000);
 
-		Assert.AreEqual(result.ExitCode, 0);
+		Assert.AreEqual(0, result.ExitCode, result.ErrorOutput);
 		Assert.IsTrue(result.StandardOutput.EndsWith("STYLE,0,0,0,0\n"));
+	}
+
+
+
+	[TestOnLinuxOnly]
+	public async Task Test_Extracted_Driver_Has_Executable_bit()
+	{	
+		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
+
+		await Program.EnsureDriverExtracted(dir);
+		string path = Path.Combine(dir, $"chromedriver");
+		Assert.IsTrue(File.Exists(path));
+
+		string bash = $"[[ -x '{path}' ]] && echo true || echo false";
+
+		var output = await ProcessExtensions.WaitForExitAndReadOutputAsync("bash", "-c", '"' + bash + '"');
+
+		Assert.AreEqual(expected: "true\n", output.StandardOutput, message: output.ErrorOutput);
 	}
 }
