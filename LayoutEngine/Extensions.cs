@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -194,20 +195,37 @@ namespace JBSnorro
 			};
 			return process.WaitForExitAndReadOutputAsync(cancellationToken);
 		}
+		public static async Task<ProcessOutput> WaitForExitAndReadOutputAsync(this ProcessStartInfo startInfo, int timeout)
+		{
+			using CancellationTokenSource cts = new();
+			cts.CancelAfter(timeout);
+			return await WaitForExitAndReadOutputAsync(startInfo, cts.Token);
+		}
+
 		public static async Task<ProcessOutput> WaitForExitAndReadOutputAsync(this ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
 		{
-			cancellationToken.ThrowIfCancellationRequested();
-			var process = Process.Start(startInfo.WithOutput())!;
+			using CancellationTokenSource cts = new();
+			cancellationToken.Register(cts.Cancel);
+			var task = impl(startInfo, cts.Token);
+			return await task.WaitAsync(cts.Token);
 
-			cancellationToken.ThrowIfCancellationRequested();
 
-			await process.WaitForExitAsync(cancellationToken);
+			async Task<ProcessOutput> impl(ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				var process = Process.Start(startInfo.WithOutput())!;
 
-			cancellationToken.ThrowIfCancellationRequested();
+				cancellationToken.Register(process.Kill);
+				cancellationToken.ThrowIfCancellationRequested();
 
-			string output = process.StandardOutput.ReadToEnd();
-			string errorOutput = process.StandardError.ReadToEnd();
-			return new ProcessOutput { ExitCode = process.ExitCode, StandardOutput = output, ErrorOutput = errorOutput };
+				await process.WaitForExitAsync(cancellationToken);
+
+				cancellationToken.ThrowIfCancellationRequested();
+
+				string errorOutput = process.StandardError.ReadToEnd();
+				string output = process.StandardOutput.ReadToEnd();
+				return new ProcessOutput { ExitCode = process.ExitCode, StandardOutput = output, ErrorOutput = errorOutput };
+			}
 		}
 		public static ProcessStartInfo WithHidden(this ProcessStartInfo startInfo)
 		{

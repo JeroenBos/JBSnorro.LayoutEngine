@@ -49,7 +49,7 @@ public class PublicationTests
 		{
 			WorkingDirectory = Path.GetDirectoryName(executablePath),
 		};
-		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(process);
+		var result = await ProcessExtensions.WaitForExitAndReadOutputAsync(process, timeout: 3000);
 
 		Assert.AreEqual(0, result.ExitCode, result.ErrorOutput);
 		Assert.IsTrue(result.StandardOutput.EndsWith("STYLE,0,0,0,0\n"));
