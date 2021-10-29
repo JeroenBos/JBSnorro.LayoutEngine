@@ -62,6 +62,11 @@ namespace JBSnorro.Web
 			{
 				options.AddArgument("--headless");
 			}
+			else
+			{
+				// GitHub action CI crashes headful, but not with this:
+				options.AddArgument("--no-sandbox");
+			}
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
 
