@@ -68,7 +68,8 @@ public class DemonstrateChromedriverBug
 {
 	[Test]
 	[TestCase(false)]
-#if CI
+#if !CI
+    // Doesn't work in GitHub actions, but running the test locally should still run fine
 	[TestCase(true)]
 #endif
 	public void Headless_And_Headfull_Chromedrivers_Round_Element_Height_Differently(bool showHead)

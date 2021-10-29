@@ -60,13 +60,8 @@ namespace JBSnorro.Web
 			var options = new ChromeOptions();
 			if (headless)
 			{
+				// Note that in GitHub action this currently is required
 				options.AddArgument("--headless");
-			}
-			else
-			{
-				// GitHub action CI crashes headful, but not with this:
-				options.AddArgument("--no-sandbox");
-				options.AddArgument("--disable-dev-shm-usage");
 			}
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
