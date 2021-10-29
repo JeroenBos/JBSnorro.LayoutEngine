@@ -1,7 +1,10 @@
 ﻿using JBSnorro.Web;
 using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
+using System;
 using System.IO;
+using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 static class Extensions
 {
@@ -57,4 +60,45 @@ public class DemonstrateChromedriverBug
 		}
 	}
 
+
+#if !CI
+    // Doesn't work in GitHub actions, but running the test locally should still run fine
+	[Test]
+#endif
+	public async Task Open_One_Element_With_Sizes_Print_The_Size_Headful()
+	{
+		CaptureStdOut output;
+		using (output = new CaptureStdOut())
+		{
+			await Program.Main(new string[] { "--file", "OneElementWithSizes.html", "--headful" });
+		}
+
+		Assert.AreEqual("", output.StdErr);
+		string expected = @"########## RECTANGLES INCOMING (V1) ##########
+HTML,0,0,800,316.5
+BODY,8,8,784,300.5
+DIV,8,8,400.29688,300.5
+HEAD,0,0,0,0
+".Replace("\r", "");
+		string stdOut = output.StdOut!.SkipCIConnectionFailedLines();
+		if (expected != stdOut)
+		{
+			Console.WriteLine("output.stdOut");
+			Console.WriteLine(stdOut);
+			Console.WriteLine(stdOut.StartsWith("Connection refused [::ffff:127.0.0.1]:"));
+		}
+		Assert.AreEqual(expected, stdOut);
+	}
+
+	[Test]
+	public async Task CacheIsDifferentForHeadful()
+{
+		const string file = "OneElementWithSizes.html";
+		const string cachePath = ".layoutenginecache/";
+
+		var headlessHash = await new Cache(headless: true).TryGetValue(file, dir: null, cachePath);
+		var headfulHash = await new Cache(headless: false).TryGetValue(file, dir: null, cachePath);
+
+		Assert.AreNotEqual(headfulHash, headlessHash);
+	}
 }
