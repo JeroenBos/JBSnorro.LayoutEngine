@@ -28,39 +28,46 @@ namespace JBSnorro.Web
 			// the CLI arguments and options
 			var arguments = new Symbol[]
 			{
-			// I tried using FileInfo and DirectoryInfo, but then if the argument is not provided, System.CommandLine throws a "path is empty" exception
-			new Option<string?>(
-				alias: "--dir",
-				description: "The absolute path to a directory of the html file to process. Must contain index.html.",
-				getDefaultValue: () => null
-			),
-			new Option<string?>(
-				alias: "--file",
-				description: "The html file to process.",
-				getDefaultValue: () => null
-			),
-			new Option<bool>(
-				alias: "--no-cache",
-				description: "If specified, the cache will not be read nor written to.",
-				getDefaultValue: () => false
-			).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
-			new Option<string?>(
-				alias: "--cache-path",
-				description: "The path to a file with cached results. ",
-				getDefaultValue: () => ".layoutenginecache/"
-				)
+				// I tried using FileInfo and DirectoryInfo, but then if the argument is not provided, System.CommandLine throws a "path is empty" exception
+				new Option<string?>(
+					alias: "--dir",
+					description: "The absolute path to a directory of the html file to process. Must contain index.html.",
+					getDefaultValue: () => null
+				),
+				new Option<string?>(
+					alias: "--file",
+					description: "The html file to process.",
+					getDefaultValue: () => null
+				),
+				new Option<bool>(
+					alias: "--no-cache",
+					description: "If specified, the cache will not be read nor written to.",
+					getDefaultValue: () => false
+				).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
+				new Option<string?>(
+					alias: "--cache-path",
+					description: "The path to a file with cached results. ",
+					getDefaultValue: () => ".layoutenginecache/"
+				),
+				new Option<bool>(
+					alias: "--headful",
+					description: "If true, the browser will pop up. In principle this doesn't matter, but in practice many things like getBoundingClientRect depend on headless or not. This is more of a workaround than a feature",
+					getDefaultValue: () => false
+				).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
 			};
 
+			// The error "An error occurred trying to start process 'dotnet-suggest' with working directory"
+			// only occurs when running from Program.cs, not when running as test
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
 			{
-				Handler = CommandHandler.Create<string?, string?, bool, string, CancellationToken>(main),
+				Handler = CommandHandler.Create<string?, string?, bool, string, bool, CancellationToken>(main),
 				Name = "layoutmeasurer",
 			}.With(arguments).InvokeAsync(args);
 
 
 
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
-			async Task main(string? dir, string? file, bool noCache, string cachePath, CancellationToken cancellationToken)
+			async Task main(string? dir, string? file, bool noCache, string cachePath, bool headful, CancellationToken cancellationToken)
 			{
 				await EnsureDriverExtracted();
 				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
@@ -79,7 +86,7 @@ namespace JBSnorro.Web
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				var cache = noCache ? null : new Cache();
+				var cache = noCache ? null : new Cache(headless: !headful);
 				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir, cachePath);
 				if (rectangles == null)
 				{
