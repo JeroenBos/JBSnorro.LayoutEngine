@@ -37,7 +37,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Opens the website at the specified path for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenPage(string fullPath)
+		public static RemoteWebDriver OpenPage(string fullPath, bool showHead = false)
 		{
 			if (fullPath == null)
 				throw new ArgumentNullException(nameof(fullPath));
@@ -48,17 +48,21 @@ namespace JBSnorro.Web
 			if (!File.Exists(fullPath))
 				throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
 
-			var driver = CreateDriver(); // don't dispose; it's returned
+			var driver = CreateDriver(headless: !showHead); // don't dispose; it's returned
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
 			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 			return driver;
 		}
-		private static ChromeDriver CreateDriver()
+		private static ChromeDriver CreateDriver(bool headless)
 		{
 			// create service before creating ChromeOptions due to its static ctor crashing otherwise. Don't dispose; is returned
 			var service = CreateDriverService();
 			var options = new ChromeOptions();
-			options.AddArgument("--headless");
+			if (headless)
+			{
+				// Note that in GitHub action this currently is required
+				options.AddArgument("--headless");
+			}
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
 
