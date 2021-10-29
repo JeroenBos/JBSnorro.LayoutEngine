@@ -10,11 +10,6 @@ using JBSnorro.Web;
 
 public class CommandLineTests
 {
-	private static string SkipCIConnectionFailedLines(string output)
-	{
-		// Skips lines starting with `Connection refused [::ffff:127.0.0.1]:` or `LayoutEngine version`
-		return string.Join('\n', output.Split('\n').SkipWhile(s => !s.StartsWith("######")));
-	}
 	[Test]
 	public async Task Open_Index()
 	{
@@ -44,7 +39,7 @@ LINK,0,0,0,0
 META,0,0,0,0
 STYLE,0,0,0,0
 ".Replace("\r", "");
-		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+		string stdOut = output.StdOut!.SkipCIConnectionFailedLines();
 		if (expected != stdOut)
         {
 			Console.WriteLine("output.stdOut");
@@ -80,7 +75,7 @@ BODY,8,8,784,300.5
 DIV,8,8,400.29688,300.5
 HEAD,0,0,0,0
 ".Replace("\r", "");
-		string stdOut = SkipCIConnectionFailedLines(output.StdOut!);
+		string stdOut = output.StdOut!.SkipCIConnectionFailedLines();
 		if (expected != stdOut)
 		{
 			Console.WriteLine("output.stdOut");
