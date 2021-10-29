@@ -38,6 +38,5 @@ public class ExtractDriverTests
 
 		string path = Path.Combine(dir, "chromedriver" + extension);
 		Console.WriteLine(path.ComputeFileHash());
-
 	}
 }

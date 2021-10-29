@@ -12,6 +12,11 @@ namespace JBSnorro.Web
 {
 	class Cache
 	{
+		private readonly bool headless;
+		public Cache(bool headless)
+		{
+			this.headless = headless;
+		}
 		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
 		/// <summary>
 		/// Gets the rectangles if if exists in the cache.
@@ -51,7 +56,7 @@ namespace JBSnorro.Web
 			}
 		}
 
-		public static async Task<nuint> ComputeHash(string? file, string? dir)
+		internal async Task<nuint> ComputeHash(string? file, string? dir)
 		{
 			if (dir != null)
 				dir = Path.GetFullPath(dir);
@@ -65,7 +70,8 @@ namespace JBSnorro.Web
 			{
 				var sum = hashCodes.Sum();
 				var versionHash = (nuint)layoutEngineVersionHash;
-				return sum + versionHash;
+				var headlessHash = this.headless ? 0 : (nuint)1;
+				return sum + versionHash + headlessHash;
 			}
 		}
 	}
