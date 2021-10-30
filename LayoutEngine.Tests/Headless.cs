@@ -92,12 +92,12 @@ HEAD,0,0,0,0
 
 	[Test]
 	public async Task CacheIsDifferentForHeadful()
-{
+	{
 		const string file = "OneElementWithSizes.html";
 		const string cachePath = ".layoutenginecache/";
 
-		var headlessHash = await new Cache(headless: true).TryGetValue(file, dir: null, cachePath);
-		var headfulHash = await new Cache(headless: false).TryGetValue(file, dir: null, cachePath);
+		var headlessHash = await new Cache(cachePath, headless: true).TryGetValue(file, dir: null);
+		var headfulHash = await new Cache(cachePath, headless: false).TryGetValue(file, dir: null);
 
 		Assert.AreNotEqual(headfulHash, headlessHash);
 	}
