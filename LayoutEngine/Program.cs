@@ -57,7 +57,8 @@ namespace JBSnorro.Web
 			};
 
 			// The error "An error occurred trying to start process 'dotnet-suggest' with working directory"
-			// only occurs when running from Program.cs, not when running as test
+			// only occurs when running from Program.cs, not when running as test.
+			// Try installing dotnet-suggest (globally)
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
 			{
 				Handler = CommandHandler.Create<string?, string?, bool, string, bool, CancellationToken>(main),
@@ -76,6 +77,7 @@ namespace JBSnorro.Web
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
 				if (dir == "") dir = null;
 				if (file == "") file = null;
+				bool headless = !headful;
 
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -86,17 +88,17 @@ namespace JBSnorro.Web
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				var cache = noCache ? null : new Cache(headless: !headful);
-				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir, cachePath);
+				var cache = noCache ? null : new Cache(cachePath, headless: !headful);
+				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir);
 				if (rectangles == null)
 				{
-					using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
+					using var driver = dir != null ? LayoutEngine.OpenDir(dir, headful) : LayoutEngine.OpenPage(file!, headful);
 					cancellationToken.ThrowIfCancellationRequested();
 
 					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
 					if (cache != null)
 					{
-						await cache.Write(file, dir, hash!, rectangles, cachePath);
+						await cache.Write(file, dir, hash!, rectangles);
 					}
 				}
 				cancellationToken.ThrowIfCancellationRequested();

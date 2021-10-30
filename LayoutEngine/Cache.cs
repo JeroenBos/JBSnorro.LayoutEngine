@@ -12,16 +12,20 @@ namespace JBSnorro.Web
 {
 	class Cache
 	{
+		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
+
 		private readonly bool headless;
-		public Cache(bool headless)
+		private readonly string cachePath;
+		public Cache(string cachePath, bool headless)
 		{
+			this.cachePath = cachePath;
 			this.headless = headless;
 		}
-		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
+
 		/// <summary>
 		/// Gets the rectangles if if exists in the cache.
 		/// </summary>
-		public async Task<(IEnumerable<TaggedRectangle>? Rectangles, string Hash)> TryGetValue(string? file, string? dir, string cachePath)
+		public async Task<(IEnumerable<TaggedRectangle>? Rectangles, string Hash)> TryGetValue(string? file, string? dir)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");
@@ -36,7 +40,7 @@ namespace JBSnorro.Web
 
 			return (null, hash);
 		}
-		public Task Write(string? file, string? dir, string hash, IEnumerable<TaggedRectangle> rectangles, string cachePath)
+		public Task Write(string? file, string? dir, string hash, IEnumerable<TaggedRectangle> rectangles)
 		{
 			if (file is null == dir is null)
 				throw new ArgumentException("Either file or dir must be provided");

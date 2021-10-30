@@ -26,7 +26,7 @@ public class DemonstrateChromedriverBug
 	[Test]
 	[TestCase(false)]
 #if !CI
-    // Doesn't work in GitHub actions, but running the test locally should still run fine
+	// Doesn't work in GitHub actions, but running the test locally should still run fine
 	[TestCase(true)]
 #endif
 	public void Headless_And_Headful_Chromedrivers_Round_Element_Height_Differently(bool showHead)
@@ -62,7 +62,7 @@ public class DemonstrateChromedriverBug
 
 
 #if !CI
-    // Doesn't work in GitHub actions, but running the test locally should still run fine
+	// Doesn't work in GitHub actions, but running the test locally should still run fine
 	[Test]
 #endif
 	public async Task Open_One_Element_With_Sizes_Print_The_Size_Headful()
@@ -70,14 +70,14 @@ public class DemonstrateChromedriverBug
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--file", "OneElementWithSizes.html", "--headful" });
+			await Program.Main(new string[] { "--file", "OneElementWithSizes.html", "--headful", "--no-cache" });
 		}
 
 		Assert.AreEqual("", output.StdErr);
 		string expected = @"########## RECTANGLES INCOMING (V1) ##########
-HTML,0,0,800,316.5
-BODY,8,8,784,300.5
-DIV,8,8,400.29688,300.5
+HTML,0,0,1906,316.5
+BODY,8,8,1890,300.5
+DIV,8,8,400.2917,300.5
 HEAD,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = output.StdOut!.SkipCIConnectionFailedLines();
@@ -92,12 +92,12 @@ HEAD,0,0,0,0
 
 	[Test]
 	public async Task CacheIsDifferentForHeadful()
-{
+	{
 		const string file = "OneElementWithSizes.html";
 		const string cachePath = ".layoutenginecache/";
 
-		var headlessHash = await new Cache(headless: true).TryGetValue(file, dir: null, cachePath);
-		var headfulHash = await new Cache(headless: false).TryGetValue(file, dir: null, cachePath);
+		var headlessHash = await new Cache(cachePath, headless: true).TryGetValue(file, dir: null);
+		var headfulHash = await new Cache(cachePath, headless: false).TryGetValue(file, dir: null);
 
 		Assert.AreNotEqual(headfulHash, headlessHash);
 	}
