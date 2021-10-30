@@ -31,9 +31,9 @@ public class CommandLineTests
 
 		Assert.AreEqual("", output.StdErr);
 		string expected = @"########## RECTANGLES INCOMING (V1) ##########
-HTML,0,0,800,600
-BODY,0,0,800,600
-DIV,0,0,800,0
+HTML,0,0,1920,1080
+BODY,0,0,1920,1080
+DIV,0,0,1920,0
 HEAD,0,0,0,0
 LINK,0,0,0,0
 META,0,0,0,0
@@ -70,8 +70,8 @@ STYLE,0,0,0,0
 
 		Assert.AreEqual("", output.StdErr);
 		string expected = @"########## RECTANGLES INCOMING (V1) ##########
-HTML,0,0,800,316.5
-BODY,8,8,784,300.5
+HTML,0,0,1920,316.5
+BODY,8,8,1904,300.5
 DIV,8,8,400.29688,300.5
 HEAD,0,0,0,0
 ".Replace("\r", "");

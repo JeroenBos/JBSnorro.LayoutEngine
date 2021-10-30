@@ -75,9 +75,9 @@ public class DemonstrateChromedriverBug
 
 		Assert.AreEqual("", output.StdErr);
 		string expected = @"########## RECTANGLES INCOMING (V1) ##########
-HTML,0,0,800,316.5
-BODY,8,8,784,300.5
-DIV,8,8,400.29688,300.5
+HTML,0,0,1906,316.5
+BODY,8,8,1890,300.5
+DIV,8,8,400.2917,300.5
 HEAD,0,0,0,0
 ".Replace("\r", "");
 		string stdOut = output.StdOut!.SkipCIConnectionFailedLines();

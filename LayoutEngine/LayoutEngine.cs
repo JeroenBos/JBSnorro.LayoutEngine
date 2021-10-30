@@ -65,6 +65,7 @@ namespace JBSnorro.Web
 			}
 			options.AddArgument("--disable-gpu");
 			options.AddArgument("--allow-file-access-from-files");
+			options.AddArgument("--window-size=1920,1080");
 
 			var driver = new ChromeDriver(service, options);
 			driver.AssertBrowserAndDriverVersionsCompatible();
