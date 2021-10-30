@@ -26,7 +26,7 @@ public class DemonstrateChromedriverBug
 	[Test]
 	[TestCase(false)]
 #if !CI
-    // Doesn't work in GitHub actions, but running the test locally should still run fine
+	// Doesn't work in GitHub actions, but running the test locally should still run fine
 	[TestCase(true)]
 #endif
 	public void Headless_And_Headful_Chromedrivers_Round_Element_Height_Differently(bool showHead)
@@ -62,7 +62,7 @@ public class DemonstrateChromedriverBug
 
 
 #if !CI
-    // Doesn't work in GitHub actions, but running the test locally should still run fine
+	// Doesn't work in GitHub actions, but running the test locally should still run fine
 	[Test]
 #endif
 	public async Task Open_One_Element_With_Sizes_Print_The_Size_Headful()

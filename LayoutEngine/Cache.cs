@@ -12,12 +12,14 @@ namespace JBSnorro.Web
 {
 	class Cache
 	{
+		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
+
 		private readonly bool headless;
 		public Cache(bool headless)
 		{
 			this.headless = headless;
 		}
-		private static readonly int layoutEngineVersionHash = Assembly.GetExecutingAssembly().GetName().Version?.GetHashCode() ?? 0;
+
 		/// <summary>
 		/// Gets the rectangles if if exists in the cache.
 		/// </summary>
