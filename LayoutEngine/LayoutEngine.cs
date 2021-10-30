@@ -13,7 +13,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Opens the index.html page in the specified directory for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenDir(string dir)
+		public static RemoteWebDriver OpenDir(string dir, bool headful = false)
 		{
 			if (dir == null)
 				throw new ArgumentNullException(nameof(dir));
@@ -32,12 +32,12 @@ namespace JBSnorro.Web
 			{
 				throw new ArgumentException($"No 'index.html' or 'Index.html' file found in dir '{dir}'");
 			}
-			return OpenPage(file1Exists ? filePath1 : filePath2);
+			return OpenPage(file1Exists ? filePath1 : filePath2, headful);
 		}
 		/// <summary>
 		/// Opens the website at the specified path for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenPage(string fullPath, bool showHead = false)
+		public static RemoteWebDriver OpenPage(string fullPath, bool headful = false)
 		{
 			if (fullPath == null)
 				throw new ArgumentNullException(nameof(fullPath));
@@ -48,7 +48,7 @@ namespace JBSnorro.Web
 			if (!File.Exists(fullPath))
 				throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
 
-			var driver = CreateDriver(headless: !showHead); // don't dispose; it's returned
+			var driver = CreateDriver(headless: !headful); // don't dispose; it's returned
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
 			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 			return driver;

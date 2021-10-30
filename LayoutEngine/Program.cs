@@ -77,6 +77,7 @@ namespace JBSnorro.Web
 				// I think by virtue of not being able to specify the empty string as argument on the command line, this works.
 				if (dir == "") dir = null;
 				if (file == "") file = null;
+				bool headless = !headful;
 
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -91,7 +92,7 @@ namespace JBSnorro.Web
 				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir);
 				if (rectangles == null)
 				{
-					using var driver = dir != null ? LayoutEngine.OpenDir(dir) : LayoutEngine.OpenPage(file!);
+					using var driver = dir != null ? LayoutEngine.OpenDir(dir, headful) : LayoutEngine.OpenPage(file!, headful);
 					cancellationToken.ThrowIfCancellationRequested();
 
 					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
