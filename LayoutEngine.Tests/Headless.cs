@@ -70,7 +70,7 @@ public class DemonstrateChromedriverBug
 		CaptureStdOut output;
 		using (output = new CaptureStdOut())
 		{
-			await Program.Main(new string[] { "--file", "OneElementWithSizes.html", "--headful" });
+			await Program.Main(new string[] { "--file", "OneElementWithSizes.html", "--headful", "--no-cache" });
 		}
 
 		Assert.AreEqual("", output.StdErr);
