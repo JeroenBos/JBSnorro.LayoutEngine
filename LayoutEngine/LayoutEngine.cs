@@ -5,6 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static JBSnorro.Extensions;
+using OpenQA.Selenium;
+using System.ComponentModel;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace JBSnorro.Web
 {
@@ -13,7 +17,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Opens the index.html page in the specified directory for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenDir(string dir, bool headful = false)
+		public static RemoteWebDriver OpenDir(string dir, bool headful = false, int zoom = 100)
 		{
 			if (dir == null)
 				throw new ArgumentNullException(nameof(dir));
@@ -32,12 +36,12 @@ namespace JBSnorro.Web
 			{
 				throw new ArgumentException($"No 'index.html' or 'Index.html' file found in dir '{dir}'");
 			}
-			return OpenPage(file1Exists ? filePath1 : filePath2, headful);
+			return OpenPage(file1Exists ? filePath1 : filePath2, headful, zoom);
 		}
 		/// <summary>
 		/// Opens the website at the specified path for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenPage(string fullPath, bool headful = false)
+		public static RemoteWebDriver OpenPage(string fullPath, bool headful = false, int zoom = 100)
 		{
 			if (fullPath == null)
 				throw new ArgumentNullException(nameof(fullPath));
@@ -47,13 +51,15 @@ namespace JBSnorro.Web
 				throw new ArgumentException($"'{fullPath}' is not a full path", nameof(fullPath));
 			if (!File.Exists(fullPath))
 				throw new ArgumentException($"The file does not exist: '{fullPath}'", nameof(fullPath));
+			if (zoom < 25 || zoom > 500)
+				throw new ArgumentOutOfRangeException(nameof(zoom));
 
-			var driver = CreateDriver(headless: !headful); // don't dispose; it's returned
+			var driver = CreateDriver(headless: !headful, zoom); // don't dispose; it's returned
 			System.Diagnostics.Trace.WriteLine($"Opening file '{fullPath.ToFileSystemPath()}'");
 			driver.Navigate().GoToUrl(fullPath.ToFileSystemPath());
 			return driver;
 		}
-		private static ChromeDriver CreateDriver(bool headless)
+		private static ChromeDriver CreateDriver(bool headless, int zoom)
 		{
 			// create service before creating ChromeOptions due to its static ctor crashing otherwise. Don't dispose; is returned
 			var service = CreateDriverService();
@@ -69,7 +75,17 @@ namespace JBSnorro.Web
 
 			var driver = new ChromeDriver(service, options);
 			driver.AssertBrowserAndDriverVersionsCompatible();
+
+			if (zoom != 100)
+			{
+				driver.Zoom(zoom);
+			}
 			return driver;
+		}
+		private static void Zoom(this ChromeDriver driver, int zoom)
+		{
+			driver.Navigate().GoToUrl("chrome://settings/");
+			driver.ExecuteScript($"chrome.settingsPrivate.setDefaultZoom({zoom / 100f:0.00});");
 		}
 		private static ChromeDriverService CreateDriverService()
 		{

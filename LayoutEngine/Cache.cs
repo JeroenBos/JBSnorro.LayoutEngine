@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using JBSnorro;
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace JBSnorro.Web
 {
@@ -16,10 +15,12 @@ namespace JBSnorro.Web
 
 		private readonly bool headless;
 		private readonly string cachePath;
-		public Cache(string cachePath, bool headless)
+		private readonly int zoom;
+		public Cache(string cachePath, bool headless, int zoom = 100)
 		{
 			this.cachePath = cachePath;
 			this.headless = headless;
+			this.zoom = zoom;
 		}
 
 		/// <summary>
@@ -75,7 +76,8 @@ namespace JBSnorro.Web
 				var sum = hashCodes.Sum();
 				var versionHash = (nuint)layoutEngineVersionHash;
 				var headlessHash = this.headless ? 0 : (nuint)1;
-				return sum + versionHash + headlessHash;
+				var zoomHash = (nuint)this.zoom;
+				return sum + versionHash + headlessHash + zoomHash;
 			}
 		}
 	}

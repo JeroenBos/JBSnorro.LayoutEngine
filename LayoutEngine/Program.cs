@@ -43,7 +43,7 @@ namespace JBSnorro.Web
 					alias: "--no-cache",
 					description: "If specified, the cache will not be read nor written to.",
 					getDefaultValue: () => false
-				).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
+				).With(arity: Maybe.Some(ArgumentArity.ZeroOrOne)),
 				new Option<string?>(
 					alias: "--cache-path",
 					description: "The path to a file with cached results. ",
@@ -51,9 +51,14 @@ namespace JBSnorro.Web
 				),
 				new Option<bool>(
 					alias: "--headful",
-					description: "If true, the browser will pop up. In principle this doesn't matter, but in practice many things like getBoundingClientRect depend on headless or not. This is more of a workaround than a feature",
+					description: "If true, the browser will pop up. In principle this doesn't matter, but in practice many things like getBoundingClientRect depend on headless or not. This is more of a workaround than a feature. ",
 					getDefaultValue: () => false
-				).With(arity: Maybe<IArgumentArity>.Some(ArgumentArity.ZeroOrOne)),
+				).With(arity: Maybe.Some(ArgumentArity.ZeroOrOne)),
+				new Option<int>(
+					alias: "--zoom",
+					description: "The zoom shouldn't affect the getBoundingClientRect of course, but unfortunately it does. Here you can specify which you want. More of a workaroudn than a feature. ",
+					getDefaultValue: () => 100
+				).With(arity: Maybe.Some(ArgumentArity.ZeroOrOne)),
 			};
 
 			// The error "An error occurred trying to start process 'dotnet-suggest' with working directory"
@@ -61,14 +66,14 @@ namespace JBSnorro.Web
 			// Try installing dotnet-suggest (globally)
 			return new RootCommand("Copies all files matching patterns on modification/creation from source to dest")
 			{
-				Handler = CommandHandler.Create<string?, string?, bool, string, bool, CancellationToken>(main),
+				Handler = CommandHandler.Create<string?, string?, bool, string, bool, int, CancellationToken>(main),
 				Name = "layoutmeasurer",
 			}.With(arguments).InvokeAsync(args);
 
 
 
 			/// <param name="cancellationToken"> Canceled on e.g. process exit or Ctrl+C events. </param>
-			async Task main(string? dir, string? file, bool noCache, string cachePath, bool headful, CancellationToken cancellationToken)
+			async Task main(string? dir, string? file, bool noCache, string cachePath, bool headful, int zoom, CancellationToken cancellationToken)
 			{
 				await EnsureDriverExtracted();
 				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
@@ -85,14 +90,18 @@ namespace JBSnorro.Web
 				{
 					throw new ArgumentException("Either --dir or --file must be specified");
 				}
+				if (zoom < 25 || zoom > 500)
+				{
+					throw new ArgumentException("--zoom must be in [25, 500].");
+				}
 				if (file != null)
 					file = Path.GetFullPath(file);
 
-				var cache = noCache ? null : new Cache(cachePath, headless: !headful);
+				var cache = noCache ? null : new Cache(cachePath, headless: !headful, zoom);
 				var (rectangles, hash) = cache == null ? (null, null) : await cache.TryGetValue(file, dir);
 				if (rectangles == null)
 				{
-					using var driver = dir != null ? LayoutEngine.OpenDir(dir, headful) : LayoutEngine.OpenPage(file!, headful);
+					using var driver = dir != null ? LayoutEngine.OpenDir(dir, headful, zoom) : LayoutEngine.OpenPage(file!, headful, zoom);
 					cancellationToken.ThrowIfCancellationRequested();
 
 					rectangles = LayoutEngine.GetSortedMeasuredBoundingClientsRects(driver);
