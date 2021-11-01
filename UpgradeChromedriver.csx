@@ -1,3 +1,4 @@
+#!/usr/bin/env dotnet-script
 #r "nuget: NuGet.Configuration, 5.11.0"
 using System;
 using System.Diagnostics;
