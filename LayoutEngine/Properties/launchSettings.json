@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "LayoutEngine": {
-      "commandName": "Project",
-      "commandLineArgs": "--no-cache --file C:\\git\\BlaTeX.Interactivity\\test\\AnnotatedData\\f(x).html --zoom 450 --headful"
-    }
-  }
-}
