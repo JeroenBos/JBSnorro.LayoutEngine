@@ -150,7 +150,7 @@ namespace JBSnorro
 		/// <summary>
 		/// Hashes the contents of the specified file.
 		/// </summary>
-		public static async Task<nuint> ComputeFileHashCodeAsync(this string path)
+		public static async Task<nuint> ComputeFileHashAsync(this string path)
 		{
 			var bytes = await File.ReadAllBytesAsync(path);
 			return bytes.ComputeHash();
