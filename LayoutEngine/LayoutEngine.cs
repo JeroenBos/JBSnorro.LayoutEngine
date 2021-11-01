@@ -123,6 +123,7 @@ namespace JBSnorro.Web
 							{
 								string error = $"The browser and driver versions aren't compatible: {browserVersion} vs {driverVersion}";
 								Console.WriteLine(error);
+								// Don't forget to close all chromedrivers in the task manager before building
 								throw new InvalidOperationException(error);
 							}
 						}

@@ -11,8 +11,9 @@ using NUnit.Framework;
 public class ExtractDriverTests
 {
 	[Test]
-	public async Task Test_Extract_Driver()
+	public async Task Test_Extract_Driver_Is_Same_As_In_LayoutEngine_Folder()
 	{
+		var expected = GetExpectedHashcode();
 		string extension = OperatingSystem.IsWindows() ? ".exe" : "";
 		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
 
@@ -22,12 +23,18 @@ public class ExtractDriverTests
 
 		unchecked
 		{
-			nuint expectedHashCode = OperatingSystem.IsWindows() ? (nuint)0x4ff61c231f22aab3 : (nuint)6311131775771370345;
-			// the following does not work in CI, because the path has 1 extra depth (the runtime identifier):
-			// int expectedHashCode = $"../../../../LayoutEngine/chromedriver{extension}".ComputeFileHashCode();
+			nuint expectedHashCode = await expected;
 
 			Assert.AreEqual(expectedHashCode, path.ComputeFileHash());
 		}
+	}
+	static Task<nuint> GetExpectedHashcode(bool? windows = null)
+	{
+		string extension = (windows ?? OperatingSystem.IsWindows()) ? ".exe" : "";
+
+		string path = Path.Combine(Properties.RepoRoot, "LayoutEngine", "chromedriver" + extension);
+
+		return path.ComputeFileHashAsync();
 	}
 
 	public async Task HelperToExtractGuidFromDifferentOS()
