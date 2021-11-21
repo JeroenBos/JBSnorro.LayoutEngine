@@ -42,7 +42,16 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
-          choco upgrade googlechrome -y --version=95.0.4638.54 --ignore-checksums
+          (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo  # debug only
+          
+          # uninstall
+          wmic product where "name like 'Google Chrome'" call uninstall /nointeractive
+          (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo  # debug only
+
+          # prevent auto-upgrade and install new chrome
+          choco pin add -n=googlechrome --version=95.0.4638.54
+          choco install googlechrome -y --version=95.0.4638.54 --ignore-checksums
+          (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
