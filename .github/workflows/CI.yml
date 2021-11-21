@@ -50,8 +50,8 @@ jobs:
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo  # debug only
 
           # prevent auto-upgrade and install new chrome
-          choco pin add -n=googlechrome --version=95.0.4638.69
           choco install googlechrome -y --version=95.0.4638.69 --ignore-checksums
+          choco pin add -n=googlechrome --version=95.0.4638.69
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
