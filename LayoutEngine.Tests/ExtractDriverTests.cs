@@ -46,4 +46,22 @@ public class ExtractDriverTests
 		string path = Path.Combine(dir, "chromedriver" + extension);
 		Console.WriteLine(path.ComputeFileHash());
 	}
+
+
+	[TestOnLinuxOnly]
+	public async Task Test_Extracted_Driver_Has_Executable_bit()
+	{
+		var dir = JBSnorro.Extensions.CreateTemporaryDirectory();
+
+		await Program.EnsureDriverExtracted(dir);
+		string path = Path.Combine(dir, $"chromedriver");
+		Assert.IsTrue(File.Exists(path));
+
+		string bash = $"[[ -x '{path}' ]] && echo true || echo false";
+
+		var output = await ProcessExtensions.WaitForExitAndReadOutputAsync("bash", "-c", '"' + bash + '"');
+
+		Assert.AreEqual(expected: "true\n", output.StandardOutput, message: output.ErrorOutput);
+	}
+
 }
