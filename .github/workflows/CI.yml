@@ -38,7 +38,7 @@ jobs:
           sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add 
           sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
           sudo apt -y update
-          sudo apt -y install google-chrome-stable=95.0.4638.54
+          sudo apt -y install google-chrome-stable=95.0.4638.69
           google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
@@ -50,8 +50,8 @@ jobs:
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo  # debug only
 
           # prevent auto-upgrade and install new chrome
-          choco pin add -n=googlechrome --version=95.0.4638.54
-          choco install googlechrome -y --version=95.0.4638.54 --ignore-checksums
+          choco pin add -n=googlechrome --version=95.0.4638.69
+          choco install googlechrome -y --version=95.0.4638.69 --ignore-checksums
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
