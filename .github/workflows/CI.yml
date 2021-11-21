@@ -39,6 +39,7 @@ jobs:
           sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
           sudo apt -y update
           sudo apt -y install google-chrome-stable=95.0.4638.54
+          google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
