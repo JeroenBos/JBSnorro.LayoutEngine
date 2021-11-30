@@ -11,7 +11,7 @@ public class MeasurerTests
 {
 	class DummyMeasurer : IMeasurer<object>
 	{
-		object IMeasurer<object>.Measure(IWebElement element, RemoteWebDriver driver) => element;
+		object IMeasurer<object>.Measure(IWebElement element, WebDriver driver) => element;
 	}
 	[Test]
 	public void BodylessHtmlDoesntRaiseException()

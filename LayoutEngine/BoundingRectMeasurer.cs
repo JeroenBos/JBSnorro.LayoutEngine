@@ -15,7 +15,7 @@ namespace JBSnorro.Web
 	/// </summary>
 	internal class BoundingRectMeasurer : IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>
 	{
-		IReadOnlyDictionary<string, TaggedRectangle> IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>.Measure(IWebElement element, RemoteWebDriver driver)
+		IReadOnlyDictionary<string, TaggedRectangle> IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>.Measure(IWebElement element, WebDriver driver)
 		{
 			if (element.TagName != "body")
 				throw new Exception("Expected html body element to have tag 'body'");
@@ -44,7 +44,7 @@ namespace JBSnorro.Web
 		/// <remarks> This method is implemented as extension method instead of instance method to allow for calling the base default interface method
 		/// and to ease the developer's life by allowing to call the default interface method without casting. </remarks>
 		[DebuggerHidden]
-		public static IReadOnlyDictionary<string, TaggedRectangle> Measure(this BoundingRectMeasurer measurer, RemoteWebDriver driver)
+		public static IReadOnlyDictionary<string, TaggedRectangle> Measure(this BoundingRectMeasurer measurer, WebDriver driver)
 		{
 			return ((IMeasurer<IReadOnlyDictionary<string, TaggedRectangle>>)measurer).Measure(driver);
 		}
