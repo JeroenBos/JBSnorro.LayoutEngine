@@ -12,9 +12,9 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Measures the sizes of all html elements on the current page on the specified driver.
 		/// </summary>
-		T Measure(RemoteWebDriver driver)
+		T Measure(WebDriver driver)
 		{
-			IWebElement body = driver.FindElementByXPath("//body");
+			IWebElement body = driver.FindElement(By.XPath("//body"));
 
 			if (body.TagName != "body")
 				throw new Exception("Expected html body element to have tag 'body'");
@@ -22,6 +22,6 @@ namespace JBSnorro.Web
 			return Measure(body, driver);
 		}
 
-		T Measure(IWebElement element, RemoteWebDriver driver);
+		T Measure(IWebElement element, WebDriver driver);
 	}
 }

@@ -17,7 +17,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Opens the index.html page in the specified directory for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenDir(string dir, bool headful = false, int zoom = 100)
+		public static WebDriver OpenDir(string dir, bool headful = false, int zoom = 100)
 		{
 			if (dir == null)
 				throw new ArgumentNullException(nameof(dir));
@@ -41,7 +41,7 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Opens the website at the specified path for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
-		public static RemoteWebDriver OpenPage(string fullPath, bool headful = false, int zoom = 100)
+		public static WebDriver OpenPage(string fullPath, bool headful = false, int zoom = 100)
 		{
 			if (fullPath == null)
 				throw new ArgumentNullException(nameof(fullPath));
@@ -97,14 +97,14 @@ namespace JBSnorro.Web
 		/// <summary>
 		/// Gets all the bounding client rectangles of the html elements in the specified driver by element xpath.
 		/// </summary>
-		public static IReadOnlyDictionary<string, TaggedRectangle> MeasureBoundingClientsRects(RemoteWebDriver driver)
+		public static IReadOnlyDictionary<string, TaggedRectangle> MeasureBoundingClientsRects(WebDriver driver)
 		{
 			return new BoundingRectMeasurer().Measure(driver);
 		}
 		/// <summary>
 		/// Gets all the bounding client rectangles of the html elements in the specified driver order by element xpath.
 		/// </summary>
-		public static IEnumerable<TaggedRectangle> GetSortedMeasuredBoundingClientsRects(RemoteWebDriver driver)
+		public static IEnumerable<TaggedRectangle> GetSortedMeasuredBoundingClientsRects(WebDriver driver)
 		{
 			return MeasureBoundingClientsRects(driver)
 					  .OrderBy(pair => pair.Key)
