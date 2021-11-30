@@ -35,17 +35,12 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Linux)
       if: ${{ matrix.runtime == 'linux-x64' }} 
       run: |
-          sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add 
-          sudo bash -c "echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list" 
-          sudo apt -y update
-          sudo apt -y install google-chrome-stable=95.0.4638.69-1
+          sudo apt install ./installers/google-chrome-stable_current_amd64.deb
           google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
-          wmic product where "name like 'Google Chrome'" call uninstall /nointeractive     # uninstall default version
-          choco install googlechrome -y --version=95.0.4638.69 --ignore-checksums          # install
-          choco pin add -n=googlechrome --version=95.0.4638.69                             # not sure if it works. TODO: https://github.com/chocolatey/choco/issues/798
+          installers\ChromeStandaloneSetup64.exe /silent /install                          # from https://www.google.com/intl/en/chrome/?standalone=1
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo   # print version
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
