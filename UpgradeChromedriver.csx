@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using NuGet.Configuration;
 
-// To upgrade cromedriver:
+// To upgrade chromedriver:
+// - manually download the standalone installers and place them in LayoutEngine/installers
+//   - https://www.google.com/intl/en/chrome/?standalone=1
 // - manually install the Nuget package to the desired version
 // - update this project's version
 // - run this script (dotnet script .\UpgradeChromedriver.csx)
@@ -48,7 +50,7 @@ try
 
 
 
-	Console.WriteLine("Copying drivers");
+	Console.WriteLine($"Copying drivers from '{latestPackagePath}'");
 	File.Copy(windriverSrc, winDriverDest, overwrite: true);
 	File.Copy(linuxdriverSrc, linuxDriverDest, overwrite: true);
 
