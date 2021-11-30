@@ -46,7 +46,7 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
-          LayoutEngine\installers\ChromeStandaloneSetup64.exe /silent /install                          # from https://www.google.com/intl/en/chrome/?standalone=1
+          LayoutEngine\installers\ChromeStandaloneSetup64.exe /silent /install
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo   # print version
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
