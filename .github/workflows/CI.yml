@@ -35,7 +35,12 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Linux)
       if: ${{ matrix.runtime == 'linux-x64' }} 
       run: |
-          [[ -f "./LayoutEngine/installers/google-chrome-stable_current_amd64.deb" ]] && echo true || echo false
+          # uninstall chrome:
+          sudo apt purge google-chrome-stable -y
+          rm -rf ~/.config/google-chrome
+
+          # reinstall specific version:
+          [[ -f "./LayoutEngine/installers/google-chrome-stable_current_amd64.deb" ]] || echo "INSTALLER NOT FOUND"
           sudo apt install ./LayoutEngine/installers/google-chrome-stable_current_amd64.deb
           google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
