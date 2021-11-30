@@ -35,6 +35,8 @@ jobs:
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Linux)
       if: ${{ matrix.runtime == 'linux-x64' }} 
       run: |
+          ls
+          [[ -f "./installers/google-chrome-stable_current_amd64.deb" ]] && echo true || echo false
           sudo apt install ./installers/google-chrome-stable_current_amd64.deb
           google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
