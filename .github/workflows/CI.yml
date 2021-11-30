@@ -39,15 +39,23 @@ jobs:
           sudo apt purge google-chrome-stable -y
           rm -rf ~/.config/google-chrome
 
-          # reinstall specific version:
+          # install specific version:
           [[ -f "./LayoutEngine/installers/google-chrome-stable_current_amd64.deb" ]] || echo "INSTALLER NOT FOUND"
           sudo apt install ./LayoutEngine/installers/google-chrome-stable_current_amd64.deb
+
+          # print version
           google-chrome --version
     - name: Ensure latest chrome version is installed (docker image can be out-of-date) (Windows)
       if: ${{ matrix.runtime == 'win10-x64' }} 
       run: |
+          # uninstall default version
+          wmic product where "name like 'Google Chrome'" call uninstall /nointeractive
+
+          # install specific version:
           LayoutEngine\installers\ChromeStandaloneSetup64.exe /silent /install
-          (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo   # print version
+
+          # print version
+          (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
