@@ -38,7 +38,7 @@ namespace JBSnorro.Web
 			}
 			return OpenPage(file1Exists ? filePath1 : filePath2, headful, zoom);
 		}
-		/// <summary>
+		/// <summary> 
 		/// Opens the website at the specified path for consumption by a <see cref="IMeasurer{T}"/>.
 		/// </summary>
 		public static WebDriver OpenPage(string fullPath, bool headful = false, int zoom = 100)
