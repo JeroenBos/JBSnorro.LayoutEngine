@@ -123,8 +123,9 @@ namespace JBSnorro.Web
 
 			internal static CacheEntry Parse(string[] lines)
 			{
-				if (lines.Length <= 1) throw new ArgumentException();
-				if (!lines[0].StartsWith(newEntryPrefix)) throw new ArgumentException();
+				if (lines.Length == 0) throw new ArgumentException("File is empty");
+				if (lines.Length == 1) throw new ArgumentException("File has only one line: '" + lines[0] + "'");
+				if (!lines[0].StartsWith(newEntryPrefix)) throw new ArgumentException("lines[0].StartsWith(newEntryPrefix)");
 
 				return new CacheEntry
 				{
