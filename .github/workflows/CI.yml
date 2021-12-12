@@ -51,6 +51,9 @@ jobs:
           # uninstall default version
           wmic product where "name like 'Google Chrome'" call uninstall /nointeractive
 
+          # Disable internet
+          New-NetFirewallRule -Name "Block Internet" -DisplayName "Block Internet access" -Description "Used to block all internet access" -Enabled True -Direction Outbound -Action Block -InterfaceType Any -RemoteAddress Internet
+
           # install specific version:
           LayoutEngine\installers\ChromeStandaloneSetup64.exe /silent /install /NOGOOGLEUPDATING
           
@@ -59,6 +62,10 @@ jobs:
 
           # print version
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
+
+          # reenable internet
+          Remove-NetFirewallRule -Name "Block Internet"
+
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
