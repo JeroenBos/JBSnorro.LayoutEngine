@@ -52,10 +52,14 @@ jobs:
           wmic product where "name like 'Google Chrome'" call uninstall /nointeractive
 
           # install specific version:
-          LayoutEngine\installers\ChromeStandaloneSetup64.exe /silent /install
+          LayoutEngine\installers\ChromeStandaloneSetup64.exe /install /NOGOOGLEUPDATING
+          
+          # disable autoupdate
+          Remove-Item "C:\Program Files (x86)\Google\Update\GoogleUpdate.exe"
 
           # print version
           (Get-Item "C:\Program Files\Google\Chrome\Application\chrome.exe").VersionInfo
+
     - name: build
       run: dotnet build LayoutEngine/LayoutEngine.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: chmod artifact executable
