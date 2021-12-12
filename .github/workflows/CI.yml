@@ -70,6 +70,6 @@ jobs:
       run: cd ./LayoutEngine && ./bin/CI/net6.0/win10-x64/LayoutEngine.exe --version
     - name: print versions (Linux)
       if: ${{ matrix.runtime == 'linux-x64' }} 
-      run: cd ./LayoutEngine && ./bin/CI/net6.0/win10-x64/LayoutEngine --version
+      run: cd ./LayoutEngine; ls; cd bin; ls; cd CI; echo "CI"; ls; cd net6.0; echo "net6.0"; ls; cd linux-x64; ls; ./bin/CI/net6.0/linux-x64/LayoutEngine --version
     
       timeout-minutes: 5
