@@ -19,8 +19,10 @@ jobs:
         include:
           - os: windows-latest
             runtime: win10-x64
+            ext: .exe
           - os: ubuntu-latest
             runtime: linux-x64
+            ext: ""
     
     env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -65,11 +67,6 @@ jobs:
       run: dotnet build LayoutEngine.Tests/LayoutEngine.Tests.csproj --configuration CI --runtime ${{ matrix.runtime }} --self-contained
     - name: test
       run: dotnet test --configuration CI --runtime ${{ matrix.runtime }}
-    - name: print versions (Windows)
-      if: ${{ matrix.runtime == 'win10-x64' }} 
-      run: cd ./LayoutEngine && ./bin/CI/net6.0/win10-x64/LayoutEngine.exe --version
-    - name: print versions (Linux)
-      if: ${{ matrix.runtime == 'linux-x64' }} 
-      run: cd ./LayoutEngine && ./bin/CI/net6.0/linux-x64/LayoutEngine --version
-    
       timeout-minutes: 5
+    - name: Print versions
+      run: cd ./LayoutEngine && ./bin/CI/net6.0/${{ matrix.runtime }}/LayoutEngine${{ matrix.ext }} --version
