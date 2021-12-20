@@ -15,6 +15,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace JBSnorro.Web
 {
@@ -29,6 +30,11 @@ namespace JBSnorro.Web
 			var arguments = new Symbol[]
 			{
 				// I tried using FileInfo and DirectoryInfo, but then if the argument is not provided, System.CommandLine throws a "path is empty" exception
+				new Option<bool>(
+					alias: "--version",
+					description: "If specified, the version of this tool and the browser driver are printed. All other arguments are ignored then.",
+					getDefaultValue: () => false
+				).With(arity: Maybe.Some(ArgumentArity.ZeroOrOne)),
 				new Option<string?>(
 					alias: "--dir",
 					description: "The absolute path to a directory of the html file to process. Must contain index.html.",
@@ -61,6 +67,10 @@ namespace JBSnorro.Web
 				).With(arity: Maybe.Some(ArgumentArity.ZeroOrOne)),
 			};
 
+			if (args.Contains("--version"))
+			{
+				return PrintVersion();
+			}
 			// The error "An error occurred trying to start process 'dotnet-suggest' with working directory"
 			// only occurs when running from Program.cs, not when running as test.
 			// Try installing dotnet-suggest (globally)
@@ -118,23 +128,45 @@ namespace JBSnorro.Web
 					Console.WriteLine(rectangle.Format());
 				}
 			}
+			async Task<int> PrintVersion()
+			{
+				Console.Out.WriteLine($"LayoutEngine version {Assembly.GetExecutingAssembly().GetName().Version!.ToString(3)}");
+
+				// installer doesn't support --version unfortunately // await new ProcessStartInfo(GetInstallerPath(), "--version").WaitForExitAndReadOutputAsync();
+
+		  // driver
+				string driverPath = await EnsureDriverExtracted();
+				var (exitCode, stdOut, stdErr) = await new ProcessStartInfo(driverPath, "--version").WaitForExitAndReadOutputAsync();
+				if (exitCode == 0)
+				{
+					Console.Out.WriteLine(stdOut);
+				}
+				else
+				{
+					Console.Error.WriteLine(stdErr);
+					return exitCode;
+				}
+
+				// publication artifact version is not printed, because the publication artifact is almost always running at this point
+				return 0;
+			}
 		}
-		public static Task EnsureDriverExtracted(string dir = "./")
+		public static Task<string> EnsureDriverExtracted(string dir = "./")
 		{
 			return EnsureDriverExtracted(dir: dir, extension: OperatingSystem.IsWindows() ? ".exe" : "");
 		}
-		internal static async Task EnsureDriverExtracted(string extension, string dir = "./")
+		internal static async Task<string> EnsureDriverExtracted(string extension, string dir = "./")
 		{
-			string filename = "chromedriver" + extension;
-			string path = Path.GetFullPath(Path.Combine(dir, filename));
-			if (!File.Exists(path))
+			var driverPath = GetChromedriverPath(extension, dir);
+
+			if (!File.Exists(driverPath))
 			{
-				File.WriteAllBytes(path, Resources.chromedriver);
+				File.WriteAllBytes(driverPath, Resources.chromedriver);
 			}
 
 			if (!OperatingSystem.IsWindows())
 			{
-				string bash = $"chmod +xwr '{path}'";
+				string bash = $"chmod +xwr '{driverPath}'";
 				var output = await ProcessExtensions.WaitForExitAndReadOutputAsync("bash", "-c", '"' + bash + '"');
 
 				if (output.ExitCode != 0)
@@ -143,6 +175,30 @@ namespace JBSnorro.Web
 					Console.WriteLine(output.ErrorOutput);
 				}
 			}
+			return driverPath;
+		}
+		internal static string GetChromedriverPath()
+		{
+			string extension = OperatingSystem.IsWindows() ? ".exe" : "";
+			return GetChromedriverPath(extension);
+		}
+		internal static string GetChromedriverPath(string extension, string dir = "./")
+		{
+			string filename = "chromedriver" + extension;
+			string path = Path.GetFullPath(Path.Combine(dir, filename));
+			return path;
+		}
+		internal static string GetInstallerPath()
+		{
+			string dir = "./installers/";
+			string filename = OperatingSystem.IsWindows() ? "ChromeStandaloneSetup64.exe" : "google-chrome-stable_current_amd64.deb";
+			string path = Path.Combine(dir, filename);
+			return path;
+		}
+		internal static string GetPublicationArtifactPath()
+		{
+			string path = "./publish/LayoutEngine" + (OperatingSystem.IsWindows() ? ".exe" : "");
+			return path;
 		}
 	}
 }
